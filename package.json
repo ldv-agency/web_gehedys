@@ -1,9 +1,0 @@
-{
-  "name": "web_gehedys",
-  "version": "1.0.0",
-  "description": "Catálogo de Sistemas Administrativos y Nómina en Venezuela - Lcda. Gehydis Echenique",
-  "scripts": {
-    "build": "echo 'Static build complete'",
-    "start": "node server.js"
-  }
-}
