@@ -33,12 +33,16 @@ document.addEventListener('DOMContentLoaded', () => {
       menuToggle.setAttribute('aria-expanded', isOpen);
     });
 
-    // Cerrar al hacer clic en un enlace de navegación regular
-    const regularNavLinks = mainNav.querySelectorAll('.nav-link:not([data-nav-filter])');
-    regularNavLinks.forEach(link => {
+    // Actualizar estado activo en clic y cerrar menú en móviles
+    const allNavLinks = mainNav.querySelectorAll('.nav-link');
+    allNavLinks.forEach(link => {
       link.addEventListener('click', () => {
-        mainNav.classList.remove('open');
-        menuToggle.setAttribute('aria-expanded', false);
+        allNavLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+        if (mainNav.classList.contains('open')) {
+          mainNav.classList.remove('open');
+          menuToggle.setAttribute('aria-expanded', 'false');
+        }
       });
     });
   }
