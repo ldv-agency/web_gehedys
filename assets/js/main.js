@@ -134,6 +134,11 @@ document.addEventListener('DOMContentLoaded', () => {
       title: 'Masterclass: Parafiscales en Venezuela | Gehydis Consulting',
       hash: 'masterclass-parafiscales',
       category: 'capacitacion'
+    },
+    'asesoria-whatsapp': {
+      title: 'Asesoría Directa por WhatsApp | Gehydis Consulting',
+      hash: 'asesoria-whatsapp',
+      category: 'all'
     }
   };
 
@@ -661,6 +666,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const company = (document.getElementById('modalCompany')?.value || '').trim();
       const phone = (document.getElementById('modalPhone')?.value || '').trim();
       const email = (document.getElementById('modalEmail')?.value || '').trim();
+      const message = (document.getElementById('modalMessage')?.value || '').trim();
       const productName = modalProductBarName ? modalProductBarName.textContent : 'el sistema solicitado';
 
       if (!firstName || !lastName || !company || !phone || !email) {
@@ -674,12 +680,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const fullName = `${firstName} ${lastName}`;
 
-      // Feedback de éxito formal
-      if (modalProductFeedback) {
-        modalProductFeedback.className = 'form-feedback success';
-        modalProductFeedback.innerHTML = '<strong>¡Solicitud Registrada con Éxito!</strong><br>Hemos recibido sus requerimientos para <em>' + productName + '</em>, ' + fullName + '. La Lcda. Gehydis Echenique o su equipo técnico se pondrá en contacto al número ' + phone + ' o al correo ' + email + ' con la información solicitada.';
-        modalProductFeedback.style.display = 'block';
-      }
+      // Guardar información del lead para la página de agradecimiento
+      sessionStorage.setItem('lead_name', fullName);
+      sessionStorage.setItem('lead_company', company);
+      sessionStorage.setItem('lead_phone', phone);
+      sessionStorage.setItem('lead_email', email);
+      sessionStorage.setItem('lead_product', productName);
+      sessionStorage.setItem('lead_message', message);
+      sessionStorage.setItem('lead_source', 'product_modal');
 
       // Evento de lead para analítica
       window.dataLayer = window.dataLayer || [];
@@ -689,11 +697,16 @@ document.addEventListener('DOMContentLoaded', () => {
         lead_type: 'product_modal'
       });
 
-      productSpecificForm.reset();
+      // Mostrar estado de carga y redirigir a gracias.html
+      const submitBtn = productSpecificForm.querySelector('button[type="submit"]');
+      if (submitBtn) {
+        submitBtn.classList.add('btn-loading');
+        submitBtn.innerHTML = '<span class="spinner-inline"></span> Procesando solicitud...';
+      }
 
       setTimeout(() => {
-        closeProductModal();
-      }, 4000);
+        window.location.href = 'gracias.html';
+      }, 600);
     });
   }
 
@@ -707,6 +720,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const company = (document.getElementById('contactCompany')?.value || '').trim();
       const phone = (document.getElementById('contactPhone')?.value || '').trim();
       const email = (document.getElementById('contactEmail')?.value || '').trim();
+      const message = (document.getElementById('contactMessage')?.value || '').trim();
       const productSelect = document.getElementById('contactProduct');
       const productText = productSelect && productSelect.selectedIndex >= 0 ? productSelect.options[productSelect.selectedIndex].text : 'solución seleccionada';
 
@@ -721,11 +735,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const fullName = `${firstName} ${lastName}`;
 
-      if (formFeedback) {
-        formFeedback.className = 'form-feedback success';
-        formFeedback.innerHTML = '<strong>¡Solicitud Formal Enviada con Éxito!</strong><br>Gracias por comunicarse con Gehydis Consulting, ' + fullName + '. Hemos registrado su consulta sobre <em>' + productText + '</em> para ' + company + '. En breve nuestro equipo técnico evaluará su requerimiento y le responderá formalmente.';
-        formFeedback.style.display = 'block';
-      }
+      // Guardar información del lead para la página de agradecimiento
+      sessionStorage.setItem('lead_name', fullName);
+      sessionStorage.setItem('lead_company', company);
+      sessionStorage.setItem('lead_phone', phone);
+      sessionStorage.setItem('lead_email', email);
+      sessionStorage.setItem('lead_product', productText);
+      sessionStorage.setItem('lead_message', message);
+      sessionStorage.setItem('lead_source', 'main_contact_form');
 
       // Evento de lead para analítica
       window.dataLayer = window.dataLayer || [];
@@ -735,8 +752,25 @@ document.addEventListener('DOMContentLoaded', () => {
         lead_type: 'main_contact_form'
       });
 
-      mainContactForm.reset();
-      formFeedback.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      // Mostrar estado de carga y redirigir a gracias.html
+      const submitBtn = mainContactForm.querySelector('button[type="submit"]');
+      if (submitBtn) {
+        submitBtn.classList.add('btn-loading');
+        submitBtn.innerHTML = '<span class="spinner-inline"></span> Procesando requerimiento...';
+      }
+
+      setTimeout(() => {
+        window.location.href = 'gracias.html';
+      }, 600);
+    });
+  }
+
+  // Botón Flotante de WhatsApp: Abre el formulario modal en lugar de saltar a WhatsApp directo
+  const floatingWaBtn = document.getElementById('floatingWaBtn');
+  if (floatingWaBtn) {
+    floatingWaBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      openProductModal('asesoria-whatsapp', 'Asesoría Directa por WhatsApp', 'Atención Inmediata', 'Consulta Personalizada');
     });
   }
 

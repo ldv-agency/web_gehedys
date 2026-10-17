@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solicitud Recibida con Éxito | Gehydis Consulting</title>
+  <meta name="description" content="Confirmación de solicitud de asesoría técnica y cotización formal de sistemas administrativos con la Lcda. Gehydis Echenique.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="icon" type="image/png" href="assets/img/logos/isologo_azul.png">
+</head>
+<body class="thankyou-body">
+
+  <header class="thankyou-header">
+    <div class="container text-center">
+      <a href="index.html" class="brand-link" aria-label="Gehydis Echenique - Consultor Administrativo">
+        <img src="assets/img/logos/ge_logo_hero.png" alt="Gehydis Echenique - Consultor Administrativo" class="brand-logo" width="60" height="54">
+      </a>
+    </div>
+  </header>
+
+  <main class="thankyou-main">
+    <div class="thankyou-card">
+      <div class="thankyou-check-wrap">
+        <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+
+      <div class="badge-corporate" style="display: inline-flex; margin-bottom: 1rem;">
+        <span class="badge-bullet"></span>
+        Atención y Respaldo Confirmado
+      </div>
+
+      <h1 class="thankyou-title">¡Solicitud Registrada con Éxito!</h1>
+
+      <p class="thankyou-desc">
+        Estimado(a) <strong id="leadNameDisplay">Cliente</strong>, hemos recibido sus requerimientos para 
+        <strong id="leadProductDisplay">nuestros sistemas administrativos</strong>. La <strong>Lcda. Gehydis Echenique</strong> o su equipo técnico atenderá su consulta con total resguardo y rigor normativo.
+      </p>
+
+      <!-- Caja de Progreso y Conteo de 12 Segundos -->
+      <div class="countdown-box">
+        <div class="countdown-status">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <span>Conectando con WhatsApp Oficial</span>
+        </div>
+
+        <div class="progress-track">
+          <div class="progress-fill" id="countdownProgressBar"></div>
+        </div>
+
+        <p class="countdown-timer-text">
+          Redirigiendo a su conversación en <strong id="countdownSeconds">12</strong> segundos...
+        </p>
+      </div>
+
+      <div class="thankyou-actions">
+        <a href="#" id="btnImmediateWa" class="btn-wa-direct">
+          <svg class="icon-whatsapp" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+          </svg>
+          <span>Continuar a WhatsApp de Inmediato</span>
+        </a>
+
+        <a href="index.html" class="btn-return-home">
+          Volver al Catálogo Principal
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="thankyou-footer">
+    <div class="container">
+      &copy; 2026 Gehydis Consulting. Consultoría Administrativa y Nómina en Venezuela.
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const GEHYDIS_WHATSAPP = '584120000000';
+      const leadName = sessionStorage.getItem('lead_name') || 'Cliente';
+      const leadCompany = sessionStorage.getItem('lead_company') || 'su empresa';
+      const leadProduct = sessionStorage.getItem('lead_product') || 'sus sistemas de nómina y cobranza';
+
+      // Actualizar datos visibles en pantalla
+      const leadNameDisplay = document.getElementById('leadNameDisplay');
+      const leadProductDisplay = document.getElementById('leadProductDisplay');
+      if (leadNameDisplay) leadNameDisplay.textContent = leadName;
+      if (leadProductDisplay) leadProductDisplay.textContent = leadProduct;
+
+      // Mensaje estructurado para WhatsApp
+      const waMsg = 'Hola Lcda. Gehydis, mi nombre es ' + leadName + ' de la empresa ' + leadCompany + '. Acabo de registrar la solicitud en su página web para la solución: ' + leadProduct + '. Deseo recibir asesoría formal.';
+      const waUrl = 'https://wa.me/' + GEHYDIS_WHATSAPP + '?text=' + encodeURIComponent(waMsg);
+
+      // Botón de acceso inmediato
+      const btnImmediateWa = document.getElementById('btnImmediateWa');
+      if (btnImmediateWa) {
+        btnImmediateWa.href = waUrl;
+      }
+
+      // Cuenta regresiva de 12 segundos con barra de progreso fluida
+      const totalSeconds = 12;
+      let remainingMs = totalSeconds * 1000;
+      const intervalMs = 50;
+
+      const progressBar = document.getElementById('countdownProgressBar');
+      const secondsDisplay = document.getElementById('countdownSeconds');
+
+      const timer = setInterval(() => {
+        remainingMs -= intervalMs;
+        if (remainingMs <= 0) {
+          clearInterval(timer);
+          if (progressBar) progressBar.style.width = '100%';
+          if (secondsDisplay) secondsDisplay.textContent = '0';
+          window.location.href = waUrl;
+        } else {
+          const currentSeconds = Math.ceil(remainingMs / 1000);
+          const percent = ((totalSeconds * 1000 - remainingMs) / (totalSeconds * 1000)) * 100;
+          if (secondsDisplay) secondsDisplay.textContent = currentSeconds;
+          if (progressBar) progressBar.style.width = percent + '%';
+        }
+      }, intervalMs);
+    });
+  </script>
+</body>
+</html>
