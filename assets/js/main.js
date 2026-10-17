@@ -33,15 +33,17 @@ document.addEventListener('DOMContentLoaded', () => {
       menuToggle.setAttribute('aria-expanded', isOpen);
     });
 
-    // Actualizar estado activo en clic y cerrar menú en móviles
+    // Actualizar estado activo en clic y cerrar menú en móviles (excepto botón desplegable)
     const allNavLinks = mainNav.querySelectorAll('.nav-link');
     allNavLinks.forEach(link => {
       link.addEventListener('click', () => {
-        allNavLinks.forEach(l => l.classList.remove('active'));
-        link.classList.add('active');
-        if (mainNav.classList.contains('open')) {
-          mainNav.classList.remove('open');
-          menuToggle.setAttribute('aria-expanded', 'false');
+        if (!link.classList.contains('nav-dropdown-btn')) {
+          allNavLinks.forEach(l => l.classList.remove('active'));
+          link.classList.add('active');
+          if (mainNav.classList.contains('open')) {
+            mainNav.classList.remove('open');
+            menuToggle.setAttribute('aria-expanded', 'false');
+          }
         }
       });
     });
@@ -226,14 +228,45 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Manejar enlaces del menú con data-nav-filter (Suite NóminaOrbe, Sector Educativo, Catálogo)
-  const navFilterLinks = document.querySelectorAll('.nav-link[data-nav-filter]');
+  /* ==========================================================================
+     Dropdown de Soluciones en la Barra de Navegación
+     ========================================================================== */
+  const navSolutionsDropdown = document.getElementById('navSolutionsDropdown');
+  const navSolutionsBtn = document.getElementById('navSolutionsBtn');
+
+  if (navSolutionsDropdown && navSolutionsBtn) {
+    // Abrir / cerrar con clic en el botón
+    navSolutionsBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = navSolutionsDropdown.classList.toggle('open');
+      navSolutionsBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+
+    // Cerrar al hacer clic fuera del dropdown
+    document.addEventListener('click', (e) => {
+      if (!navSolutionsDropdown.contains(e.target)) {
+        navSolutionsDropdown.classList.remove('open');
+        navSolutionsBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // Cerrar con tecla Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && navSolutionsDropdown.classList.contains('open')) {
+        navSolutionsDropdown.classList.remove('open');
+        navSolutionsBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  // Manejar enlaces con data-nav-filter (tanto Catálogo principal como ítems del dropdown)
+  const navFilterLinks = document.querySelectorAll('[data-nav-filter]');
   navFilterLinks.forEach(link => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
       const filterTarget = link.getAttribute('data-nav-filter');
 
-      // Desplazamiento suave al catálogo
+      // Desplazamiento suave a la sección de catálogo
       const catalogSection = document.getElementById('catalogo');
       if (catalogSection) {
         const topOffset = catalogSection.offsetTop - 70;
@@ -243,8 +276,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
 
-      // Aplicar filtro correspondiente
+      // Aplicar filtro correspondiente (actualiza títulos de página, hash URL, encabezados y filtros)
       applyFilter(filterTarget, true);
+
+      // Actualizar estado activo en la barra de navegación
+      const allTopNavLinks = document.querySelectorAll('.header .nav-link');
+      allTopNavLinks.forEach(l => l.classList.remove('active'));
+
+      if (filterTarget === 'all') {
+        const catalogNavLink = document.querySelector('.header .nav-link[data-nav-filter="all"]');
+        if (catalogNavLink) catalogNavLink.classList.add('active');
+      } else {
+        if (navSolutionsBtn) navSolutionsBtn.classList.add('active');
+      }
+
+      // Cerrar dropdown si está abierto
+      if (navSolutionsDropdown) {
+        navSolutionsDropdown.classList.remove('open');
+        if (navSolutionsBtn) navSolutionsBtn.setAttribute('aria-expanded', 'false');
+      }
 
       // Cerrar menú móvil si está abierto
       if (mainNav) mainNav.classList.remove('open');

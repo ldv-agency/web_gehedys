@@ -24,8 +24,66 @@
         <ul class="nav-list">
           <li><a href="#inicio" class="nav-link active">Inicio</a></li>
           <li><a href="#catalogo" class="nav-link" data-nav-filter="all">Catálogo</a></li>
-          <li><a href="#suite-nomina" class="nav-link" data-nav-filter="nomina">Suite NóminaOrbe</a></li>
-          <li><a href="#sector-educativo" class="nav-link" data-nav-filter="colegios">Sector Educativo</a></li>
+          <li class="nav-item-dropdown" id="navSolutionsDropdown">
+            <button type="button" class="nav-link nav-dropdown-btn" id="navSolutionsBtn" aria-expanded="false" aria-haspopup="true">
+              <span>Soluciones</span>
+              <svg class="dropdown-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="nav-dropdown-menu" id="navSolutionsMenu" role="menu" aria-label="Catálogo de Soluciones">
+              <a href="#suite-nomina" class="dropdown-item" role="menuitem" data-nav-filter="nomina">
+                <div class="dropdown-item-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+                </div>
+                <div class="dropdown-item-content">
+                  <strong class="dropdown-item-title">Suite NóminaOrbe</strong>
+                  <span class="dropdown-item-desc">Nómina Empresarial, LOTTT y Tasa BCV</span>
+                </div>
+              </a>
+
+              <a href="#sector-educativo" class="dropdown-item" role="menuitem" data-nav-filter="colegios">
+                <div class="dropdown-item-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                </div>
+                <div class="dropdown-item-content">
+                  <strong class="dropdown-item-title">Sector Educativo</strong>
+                  <span class="dropdown-item-desc">Nómina por Horas Docente y Cobranza Escolar</span>
+                </div>
+              </a>
+
+              <a href="#plantillas-laborales" class="dropdown-item" role="menuitem" data-nav-filter="plantillas">
+                <div class="dropdown-item-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                </div>
+                <div class="dropdown-item-content">
+                  <strong class="dropdown-item-title">Plantillas Laborales</strong>
+                  <span class="dropdown-item-desc">Liquidaciones, Utilidades y Pensiones</span>
+                </div>
+              </a>
+
+              <a href="#masterclasses" class="dropdown-item" role="menuitem" data-nav-filter="capacitacion">
+                <div class="dropdown-item-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                </div>
+                <div class="dropdown-item-content">
+                  <strong class="dropdown-item-title">Formación y Masterclasses</strong>
+                  <span class="dropdown-item-desc">Ingreso Mínimo y Parafiscales en Video</span>
+                </div>
+              </a>
+
+              <div class="dropdown-divider"></div>
+
+              <a href="#catalogo" class="dropdown-item dropdown-item-all" role="menuitem" data-nav-filter="all">
+                <div class="dropdown-item-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                </div>
+                <div class="dropdown-item-content">
+                  <strong class="dropdown-item-title">Ver Catálogo Completo</strong>
+                  <span class="dropdown-item-desc">Explorar todas las soluciones automatizadas</span>
+                </div>
+                <svg class="dropdown-item-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+            </div>
+          </li>
           <li><a href="#perfil" class="nav-link">Sobre Gehydis</a></li>
           <li><a href="#contacto" class="nav-link">Contacto</a></li>
           <li><a href="#faq" class="nav-link">Preguntas</a></li>

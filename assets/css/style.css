@@ -203,6 +203,161 @@ ul {
   box-shadow: inset 0 0 0 1px rgba(0, 102, 204, 0.15);
 }
 
+/* ==========================================================================
+   Navigation Dropdown Menu (Soluciones Especializadas)
+   ========================================================================== */
+.nav-item-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.nav-dropdown-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: transparent;
+  cursor: pointer;
+  border: none;
+}
+
+.dropdown-chevron {
+  transition: transform 0.2s ease;
+  color: #64748B;
+  flex-shrink: 0;
+}
+
+.nav-item-dropdown:hover .dropdown-chevron,
+.nav-item-dropdown.open .dropdown-chevron {
+  transform: rotate(180deg);
+  color: var(--color-accent);
+}
+
+.nav-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  min-width: 340px;
+  background: #FFFFFF;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  border-radius: 16px;
+  box-shadow: 0 20px 45px -12px rgba(11, 37, 69, 0.18), 0 0 1px 1px rgba(11, 37, 69, 0.05);
+  padding: 0.65rem;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.2s;
+  z-index: 1000;
+}
+
+/* Puente invisible para evitar que el hover se cierre al mover el mouse */
+.nav-dropdown-menu::before {
+  content: "";
+  position: absolute;
+  top: -12px;
+  left: 0;
+  right: 0;
+  height: 12px;
+}
+
+.nav-item-dropdown:hover .nav-dropdown-menu,
+.nav-item-dropdown.open .nav-dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--color-text-main);
+  transition: background-color 0.15s ease, transform 0.15s ease;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(0, 102, 204, 0.06);
+  transform: translateX(2px);
+}
+
+.dropdown-item-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(0, 102, 204, 0.08);
+  border: 1px solid rgba(0, 102, 204, 0.14);
+  color: #0066CC;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.dropdown-item:hover .dropdown-item-icon {
+  background: #0066CC;
+  color: #FFFFFF;
+  transform: scale(1.05);
+}
+
+.dropdown-item-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex-grow: 1;
+}
+
+.dropdown-item-title {
+  font-family: var(--font-heading);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  line-height: 1.25;
+  transition: color 0.15s ease;
+}
+
+.dropdown-item:hover .dropdown-item-title {
+  color: var(--color-accent);
+}
+
+.dropdown-item-desc {
+  font-size: 0.75rem;
+  color: #64748B;
+  line-height: 1.35;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: var(--color-border);
+  margin: 0.45rem 0.5rem;
+}
+
+.dropdown-item-all {
+  background-color: #F8FAFC;
+  border: 1px dashed rgba(203, 213, 225, 0.8);
+}
+
+.dropdown-item-all:hover {
+  background-color: rgba(0, 102, 204, 0.08);
+  border-color: rgba(0, 102, 204, 0.35);
+}
+
+.dropdown-item-arrow {
+  color: #94A3B8;
+  flex-shrink: 0;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.dropdown-item-all:hover .dropdown-item-arrow {
+  transform: translateX(3px);
+  color: var(--color-accent);
+}
+
 .nav-actions {
   display: flex;
   align-items: center;
@@ -1975,6 +2130,42 @@ ul {
 
   .menu-toggle {
     display: flex;
+  }
+
+  .nav-item-dropdown {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .nav-dropdown-btn {
+    width: 100%;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    font-size: 0.9375rem;
+    border-radius: var(--radius-md);
+  }
+
+  .nav-dropdown-menu {
+    position: static;
+    transform: none;
+    min-width: 100%;
+    box-shadow: none;
+    border: 1px solid var(--color-border);
+    background: #F8FAFC;
+    border-radius: var(--radius-md);
+    margin-top: 0.35rem;
+    padding: 0.4rem;
+    display: none;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .nav-item-dropdown.open .nav-dropdown-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
   }
 }
 
