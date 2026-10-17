@@ -1,0 +1,18 @@
+{
+  "name": "web_gehedys",
+  "version": "1.0.0",
+  "description": "Catálogo de Sistemas Administrativos y Nómina en Venezuela - Lcda. Gehydis Echenique",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "nomina",
+    "excel",
+    "venezuela",
+    "lottt",
+    "bcv"
+  ],
+  "author": "LDV Agency",
+  "license": "ISC"
+}
