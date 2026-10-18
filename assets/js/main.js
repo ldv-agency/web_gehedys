@@ -5,7 +5,7 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  const GEHYDIS_WHATSAPP = '584120000000';
+  const GEHYDIS_WHATSAPP = '584220284363';
 
   // Actualizar enlaces de WhatsApp si existen
   const updateWhatsAppLinks = () => {
