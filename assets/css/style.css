@@ -1190,7 +1190,7 @@ ul {
 }
 
 .product-card[data-category="capacitacion"] .product-thumbnail {
-  object-position: center 60%;
+  object-position: center center;
 }
 
 .featured-product .product-thumbnail {
