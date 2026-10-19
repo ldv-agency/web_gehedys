@@ -30,19 +30,25 @@ document.addEventListener('DOMContentLoaded', () => {
   if (menuToggle && mainNav) {
     menuToggle.addEventListener('click', () => {
       const isOpen = mainNav.classList.toggle('open');
-      menuToggle.setAttribute('aria-expanded', isOpen);
+      menuToggle.classList.toggle('active', isOpen);
+      menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      document.body.classList.toggle('menu-open', isOpen);
     });
 
     // Actualizar estado activo en clic y cerrar menú en móviles (excepto botón desplegable)
-    const allNavLinks = mainNav.querySelectorAll('.nav-link');
+    const allNavLinks = mainNav.querySelectorAll('.nav-link, .nav-mobile-cta');
     allNavLinks.forEach(link => {
       link.addEventListener('click', () => {
         if (!link.classList.contains('nav-dropdown-btn')) {
-          allNavLinks.forEach(l => l.classList.remove('active'));
-          link.classList.add('active');
+          mainNav.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+          if (link.classList.contains('nav-link')) {
+            link.classList.add('active');
+          }
           if (mainNav.classList.contains('open')) {
             mainNav.classList.remove('open');
+            menuToggle.classList.remove('active');
             menuToggle.setAttribute('aria-expanded', 'false');
+            document.body.classList.remove('menu-open');
           }
         }
       });
@@ -293,7 +299,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Cerrar menú móvil si está abierto
       if (mainNav) mainNav.classList.remove('open');
-      if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false');
+      if (menuToggle) {
+        menuToggle.classList.remove('active');
+        menuToggle.setAttribute('aria-expanded', 'false');
+      }
+      document.body.classList.remove('menu-open');
 
       // Aplicar filtro correspondiente de inmediato
       applyFilter(filterTarget, true);
