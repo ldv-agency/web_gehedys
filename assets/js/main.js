@@ -154,6 +154,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const filterButtons = document.querySelectorAll('.filter-btn');
   const productCards = document.querySelectorAll('.product-card');
   const catalogGrid = document.querySelector('.catalog-grid');
+  const activeFilterIndicator = document.getElementById('activeFilterIndicator');
+  const activeFilterText = document.getElementById('activeFilterText');
+  const btnClearFilter = document.getElementById('btnClearFilter');
+
+  if (btnClearFilter) {
+    btnClearFilter.addEventListener('click', () => {
+      applyFilter('all', true);
+    });
+  }
 
   const applyFilter = (filterValue, updateHistory = true) => {
     const meta = categoryMetadata[filterValue] || categoryMetadata['all'];
@@ -164,6 +173,20 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.classList.toggle('active', match);
       btn.setAttribute('aria-selected', match ? 'true' : 'false');
     });
+
+    // Actualizar indicador de categoría activa en móvil y escritorio
+    if (activeFilterIndicator && activeFilterText) {
+      if (filterValue === 'all') {
+        activeFilterIndicator.style.display = 'none';
+      } else {
+        activeFilterIndicator.style.display = 'flex';
+        let count = 0;
+        productCards.forEach(c => {
+          if (c.getAttribute('data-category') === filterValue) count++;
+        });
+        activeFilterText.textContent = `Mostrando ${count} solución${count > 1 ? 'es' : ''} de ${meta.badge}`;
+      }
+    }
 
     // Actualizar encabezado dinámico de la sección catálogo en la página
     const catalogBadge = document.getElementById('catalogBadge');
@@ -184,16 +207,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const cardCategory = card.getAttribute('data-category');
       if (filterValue === 'all' || cardCategory === filterValue) {
         card.style.display = card.classList.contains('featured-product') ? 'grid' : 'flex';
-        setTimeout(() => {
-          card.style.opacity = '1';
-          card.style.transform = 'translateY(0)';
-        }, 10);
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
       } else {
+        card.style.display = 'none';
         card.style.opacity = '0';
         card.style.transform = 'translateY(10px)';
-        setTimeout(() => {
-          card.style.display = 'none';
-        }, 150);
       }
     });
 
@@ -266,18 +285,32 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       const filterTarget = link.getAttribute('data-nav-filter');
 
-      // Desplazamiento suave a la sección de catálogo
-      const catalogSection = document.getElementById('catalogo');
-      if (catalogSection) {
-        const topOffset = catalogSection.offsetTop - 70;
-        window.scrollTo({
-          top: topOffset,
-          behavior: 'smooth'
-        });
+      // Cerrar dropdown si está abierto
+      if (navSolutionsDropdown) {
+        navSolutionsDropdown.classList.remove('open');
+        if (navSolutionsBtn) navSolutionsBtn.setAttribute('aria-expanded', 'false');
       }
 
-      // Aplicar filtro correspondiente (actualiza títulos de página, hash URL, encabezados y filtros)
+      // Cerrar menú móvil si está abierto
+      if (mainNav) mainNav.classList.remove('open');
+      if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false');
+
+      // Aplicar filtro correspondiente de inmediato
       applyFilter(filterTarget, true);
+
+      // Desplazamiento suave con cálculo dinámico exacto de altura del encabezado sticky
+      setTimeout(() => {
+        const catalogSection = document.getElementById('catalogo');
+        if (catalogSection) {
+          const headerElem = document.getElementById('header');
+          const headerHeight = headerElem ? headerElem.offsetHeight : 76;
+          const targetPos = catalogSection.getBoundingClientRect().top + window.pageYOffset - headerHeight - 12;
+          window.scrollTo({
+            top: targetPos,
+            behavior: 'smooth'
+          });
+        }
+      }, 30);
 
       // Actualizar estado activo en la barra de navegación
       const allTopNavLinks = document.querySelectorAll('.header .nav-link');
@@ -289,18 +322,27 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         if (navSolutionsBtn) navSolutionsBtn.classList.add('active');
       }
-
-      // Cerrar dropdown si está abierto
-      if (navSolutionsDropdown) {
-        navSolutionsDropdown.classList.remove('open');
-        if (navSolutionsBtn) navSolutionsBtn.setAttribute('aria-expanded', 'false');
-      }
-
-      // Cerrar menú móvil si está abierto
-      if (mainNav) mainNav.classList.remove('open');
-      if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false');
     });
   });
+
+  // Botón del Hero "Explorar Catálogo de Soluciones"
+  const heroExploreBtn = document.getElementById('heroExploreBtn');
+  if (heroExploreBtn) {
+    heroExploreBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      applyFilter('all', true);
+      const catalogSection = document.getElementById('catalogo');
+      if (catalogSection) {
+        const headerElem = document.getElementById('header');
+        const headerHeight = headerElem ? headerElem.offsetHeight : 76;
+        const targetPos = catalogSection.getBoundingClientRect().top + window.pageYOffset - headerHeight - 12;
+        window.scrollTo({
+          top: targetPos,
+          behavior: 'smooth'
+        });
+      }
+    });
+  }
 
   /* ==========================================================================
      Acordeón Desplegable de Detalles en Tarjetas de Catálogo
@@ -477,21 +519,24 @@ document.addEventListener('DOMContentLoaded', () => {
         modalWaBtn.setAttribute('href', `https://wa.me/${GEHYDIS_WHATSAPP}?text=${encodeURIComponent(data.waMessage)}`);
       }
       if (modalWaText) {
-        modalWaText.textContent = `Solicitar Formulario de ${data.title}`;
+        modalWaText.textContent = `Solicitar Cotización Formal`;
       }
 
-      // Cargar primera imagen
+      // Cargar primera imagen con decodificación asíncrona
       if (data.images.length > 0) {
         modalMainImg.src = data.images[0].src;
         modalMainImg.alt = data.images[0].alt;
+        modalMainImg.loading = 'eager';
+        modalMainImg.decoding = 'async';
       }
 
-      // Generar miniaturas
+      // Generar miniaturas optimizadas para móvil
       modalThumbs.innerHTML = '';
       data.images.forEach((img, idx) => {
         const thumb = document.createElement('div');
         thumb.className = `modal-thumb ${idx === 0 ? 'active' : ''}`;
-        thumb.innerHTML = `<img src="${img.src}" alt="${img.alt}">`;
+        thumb.setAttribute('title', img.alt);
+        thumb.innerHTML = `<img src="${img.src}" alt="${img.alt}" loading="eager" decoding="async">`;
         thumb.addEventListener('click', () => {
           modalMainImg.src = img.src;
           modalMainImg.alt = img.alt;
@@ -504,6 +549,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Mostrar modal
       modal.classList.add('open');
       modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
       document.body.style.overflow = 'hidden';
     });
   });
@@ -512,6 +558,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeModal = () => {
     modal.classList.remove('open');
     modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
     document.body.style.overflow = '';
   };
 
@@ -577,11 +624,27 @@ document.addEventListener('DOMContentLoaded', () => {
   // Abrir Modal de Producto
   const openProductModal = (id, name, category, price) => {
     if (!modalProductForm) return;
-    if (modalProductCategory) modalProductCategory.textContent = category || 'Solución Profesional';
-    if (modalProductTitle) modalProductTitle.textContent = 'Solicitar: ' + (name || 'Sistema');
-    if (modalProductBarName) modalProductBarName.textContent = name || 'Sistema Seleccionado';
-    if (modalProductBarPrice) modalProductBarPrice.textContent = price || 'Consulte Cotización';
+
+    const isWaDirect = (id === 'asesoria-whatsapp');
+
+    if (modalProductCategory) {
+      modalProductCategory.textContent = isWaDirect ? 'Atención Inmediata' : (category || 'Solución Profesional');
+    }
+    if (modalProductTitle) {
+      modalProductTitle.textContent = isWaDirect ? 'Asesoría Directa por WhatsApp' : ('Solicitar: ' + (name || 'Sistema'));
+    }
+    if (modalProductBarName) {
+      modalProductBarName.textContent = isWaDirect ? 'Consulta con la Lcda. Gehydis Echenique' : (name || 'Sistema Seleccionado');
+    }
+    if (modalProductBarPrice) {
+      modalProductBarPrice.textContent = isWaDirect ? 'Respuesta Rápida y Personalizada' : (price || 'Consulte Cotización');
+    }
     if (modalHiddenProduct) modalHiddenProduct.value = id || '';
+
+    const submitText = document.getElementById('modalProductSubmitText');
+    if (submitText) {
+      submitText.textContent = isWaDirect ? 'Continuar a WhatsApp Oficial' : 'Confirmar y Enviar a WhatsApp';
+    }
 
     // Pre-seleccionar también en el formulario principal si existe la opción
     if (contactProductSelect && id) {
@@ -621,6 +684,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     modalProductForm.classList.add('open');
     modalProductForm.style.display = 'flex';
+    document.body.classList.add('modal-open');
     document.body.style.overflow = 'hidden';
 
     const firstInput = document.getElementById('modalFirstName');
@@ -632,6 +696,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!modalProductForm) return;
     modalProductForm.classList.remove('open');
     modalProductForm.style.display = 'none';
+    document.body.classList.remove('modal-open');
     document.body.style.overflow = '';
 
     // Restaurar título según el filtro activo
@@ -856,6 +921,18 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   handleInitialHash();
+
+  // Manejo de error y reintento automático para imágenes en caso de fallo temporal de red móvil
+  document.addEventListener('error', (e) => {
+    if (e.target.tagName === 'IMG' && !e.target.dataset.retried) {
+      e.target.dataset.retried = '1';
+      const originalSrc = e.target.getAttribute('src');
+      if (originalSrc && !originalSrc.startsWith('data:') && !originalSrc.startsWith('blob:')) {
+        const cleanUrl = originalSrc.split('?')[0];
+        e.target.src = cleanUrl + '?retry=' + Date.now();
+      }
+    }
+  }, true);
 
   console.log('Gehydis Consulting catalog loaded successfully.');
 });

@@ -1901,10 +1901,10 @@ ul {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(7, 19, 34, 0.85);
+  background-color: rgba(7, 19, 34, 0.88);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  z-index: 1000;
+  z-index: 10000;
   display: none;
   align-items: center;
   justify-content: center;
@@ -1916,6 +1916,15 @@ ul {
 .modal-backdrop.open {
   display: flex;
   opacity: 1;
+}
+
+/* Ocultar el botón flotante de WhatsApp automáticamente al abrir cualquier modal */
+body.modal-open .floating-wa-btn,
+.modal-backdrop.open ~ .floating-wa-btn {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transform: scale(0.6) translateY(20px) !important;
 }
 
 .modal-dialog {
@@ -2026,19 +2035,28 @@ ul {
   cursor: pointer;
   border: 2px solid var(--color-border);
   flex-shrink: 0;
-  opacity: 0.65;
+  opacity: 0.75;
   transition: all var(--transition-fast);
+  background-color: #1E293B;
+  position: relative;
+  font-size: 0;
+  color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .modal-thumb:hover, .modal-thumb.active {
   opacity: 1;
   border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.35);
 }
 
 .modal-thumb img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
 .modal-info {
@@ -2071,12 +2089,17 @@ ul {
 .btn-modal-form {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
-  padding: 0.65rem 1.25rem;
-  font-size: 0.9rem;
+  padding: 0.75rem 1.35rem;
+  font-size: 0.9375rem;
   font-weight: 700;
   border-radius: var(--radius-md);
-  white-space: nowrap;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.3;
+  max-width: 100%;
+  word-break: normal;
   flex-shrink: 0;
 }
 
@@ -2108,12 +2131,19 @@ ul {
   .modal-footer {
     flex-direction: column;
     align-items: stretch;
-    gap: 0.5rem;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
     text-align: center;
   }
   .btn-modal-form {
     width: 100%;
     justify-content: center;
+    padding: 0.85rem 1rem;
+    font-size: 0.9375rem;
+    white-space: normal;
+  }
+  .modal-notice {
+    font-size: 0.75rem;
   }
 }
 
@@ -2170,14 +2200,19 @@ ul {
 @media (max-width: 1024px) {
   .header .main-nav {
     display: none;
-    position: absolute;
+    position: fixed;
     top: 76px;
     left: 0;
     right: 0;
+    bottom: 0;
+    max-height: calc(100vh - 76px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     background-color: #FFFFFF;
     border-bottom: 1px solid var(--color-border);
-    padding: 1.25rem 1.5rem;
-    box-shadow: var(--shadow-lg);
+    padding: 1.25rem 1.5rem 3rem;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    z-index: 999;
   }
 
   .header .main-nav.open {
@@ -2187,13 +2222,13 @@ ul {
   .header .nav-list {
     flex-direction: column;
     align-items: stretch;
-    gap: 0.35rem;
+    gap: 0.4rem;
   }
 
   .header .nav-link {
     width: 100%;
     justify-content: flex-start;
-    padding: 0.75rem 1rem;
+    padding: 0.8rem 1rem;
     border-radius: var(--radius-md);
     font-size: 0.9375rem;
   }
@@ -2211,7 +2246,7 @@ ul {
   .nav-dropdown-btn {
     width: 100%;
     justify-content: space-between;
-    padding: 0.75rem 1rem;
+    padding: 0.8rem 1rem;
     font-size: 0.9375rem;
     border-radius: var(--radius-md);
   }
@@ -2225,7 +2260,7 @@ ul {
     background: #F8FAFC;
     border-radius: var(--radius-md);
     margin-top: 0.35rem;
-    padding: 0.4rem;
+    padding: 0.45rem;
     display: none;
     opacity: 1;
     visibility: visible;
@@ -2235,7 +2270,7 @@ ul {
   .nav-item-dropdown.open .nav-dropdown-menu {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.35rem;
   }
 }
 
@@ -2268,6 +2303,33 @@ ul {
     transform: none;
   }
 
+  /* Catalog Filter Bar horizontal swipe en móvil */
+  .catalog-filter-bar {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    max-width: 100%;
+    border-radius: var(--radius-lg);
+    padding: 0.4rem 0.5rem;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .catalog-filter-bar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter-btn {
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-size: 0.8125rem;
+    padding: 0.5rem 0.95rem;
+  }
+
   .catalog-grid {
     grid-template-columns: 1fr;
   }
@@ -2283,6 +2345,61 @@ ul {
   .footer-content {
     grid-template-columns: 1fr;
   }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    font-size: 16px !important; /* Previene auto-zoom molesto en Safari / Chrome móvil */
+  }
+}
+
+/* Indicador de Filtro de Categoría Activo */
+.active-filter-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: linear-gradient(135deg, #F0F6FC 0%, #E6F0FA 100%);
+  border: 1px solid #BFDBFE;
+  border-radius: var(--radius-md);
+  padding: 0.65rem 1rem;
+  margin-top: 1.25rem;
+  width: 100%;
+  max-width: 620px;
+  margin-left: auto;
+  margin-right: auto;
+  animation: modalSlideUp 0.25s ease;
+}
+
+.active-filter-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+.btn-clear-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78125rem;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn-clear-filter:hover {
+  background: #0066CC;
+  color: #FFFFFF;
+  border-color: #0066CC;
 }
 
 /* ==========================================================================
@@ -2494,58 +2611,155 @@ ul {
   border: 1px solid #FECACA;
 }
 
-/* Modal Form Dialog */
+/* Modal Form Dialog - Formulario Profesional para WhatsApp y Productos */
 .modal-form-dialog {
-  max-width: 620px;
-  width: 90%;
-  max-height: min(92vh, 850px);
-  overflow-y: auto;
+  max-width: 580px;
+  width: 92%;
+  max-height: min(94vh, 850px);
+  overflow: hidden;
   background: #FFFFFF;
-  border-radius: var(--radius-xl);
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
-  animation: modalSlideUp 0.3s ease;
-  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+  animation: modalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.modal-form-dialog .modal-header {
+  padding: 1.15rem 1.4rem;
+  background: linear-gradient(135deg, #07192F 0%, #0B2545 60%, #134074 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.modal-form-dialog .modal-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin-top: 0.25rem;
+  line-height: 1.25;
+}
+
+.modal-form-dialog .badge-tag-category {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(56, 189, 248, 0.16);
+  color: #38BDF8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.modal-form-dialog .modal-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+  padding: 0;
+}
+
+.modal-form-dialog .modal-close:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
+}
+
+.modal-form-dialog .modal-body {
+  padding: 1.25rem 1.4rem 1.5rem;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .modal-product-summary-bar {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  background: linear-gradient(90deg, #F0F6FC 0%, #E2EDF8 100%);
-  border: 1px solid #BFDBFE;
-  border-radius: var(--radius-md);
-  padding: 0.85rem 1.25rem;
-  margin-bottom: 1.5rem;
+  gap: 0.85rem;
+  background: linear-gradient(135deg, #F0F7FF 0%, #E6F2FE 100%);
+  border: 1px solid #BAE6FD;
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+  margin-bottom: 0.25rem;
 }
 
 .modal-bar-icon {
   width: 38px;
   height: 38px;
-  border-radius: 8px;
-  background-color: var(--color-accent);
+  border-radius: 10px;
+  background: linear-gradient(135deg, #0066CC 0%, #004C99 100%);
   color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(0, 102, 204, 0.25);
 }
 
 .modal-bar-details {
   display: flex;
   flex-direction: column;
+  gap: 0.15rem;
   flex: 1;
 }
 
 .modal-bar-details strong {
   font-family: var(--font-heading);
-  font-size: 1rem;
+  font-size: 0.95rem;
+  font-weight: 700;
   color: var(--color-primary-dark);
+  line-height: 1.25;
 }
 
 .modal-product-bar-price {
   font-size: 0.8125rem;
   font-weight: 700;
-  color: var(--color-accent);
+  color: #0066CC;
+}
+
+/* Botón de Enviar a WhatsApp en el Modal */
+.btn-submit-modal {
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  color: #FFFFFF;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 0.95rem 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(18, 140, 126, 0.35);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  border: none;
+}
+
+.btn-submit-modal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(18, 140, 126, 0.5);
+}
+
+.btn-submit-modal .btn-wa-icon {
+  flex-shrink: 0;
 }
 
 /* ==========================================================================
