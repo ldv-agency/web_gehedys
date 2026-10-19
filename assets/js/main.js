@@ -364,6 +364,84 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ==========================================================================
+     Navegación Directa al Formulario de Contacto (Campo Nombre)
+     ========================================================================== */
+  const scrollToContactNameField = (smooth = true) => {
+    const nameField = document.getElementById('contactFirstName');
+    const formCard = document.getElementById('formCard') || document.querySelector('.form-card');
+    const target = nameField || formCard;
+    if (target) {
+      const headerElem = document.getElementById('header');
+      const headerHeight = headerElem ? headerElem.offsetHeight : 76;
+      
+      // En móvil y escritorio, alinear directamente con el formulario y el campo nombre
+      const rect = formCard ? formCard.getBoundingClientRect() : target.getBoundingClientRect();
+      const targetPos = rect.top + window.pageYOffset - headerHeight - 16;
+
+      window.scrollTo({
+        top: Math.max(0, targetPos),
+        behavior: smooth ? 'smooth' : 'auto'
+      });
+
+      if (nameField) {
+        setTimeout(() => {
+          try {
+            nameField.focus({ preventScroll: true });
+          } catch (err) {
+            nameField.focus();
+          }
+        }, smooth ? 450 : 80);
+      }
+    }
+  };
+
+  // Interceptar todos los enlaces y botones que llevan al lead al formulario
+  const contactLeadSelectors = [
+    'a[href="#contacto"]',
+    'a[href="#formulario-contacto"]',
+    '.btn-scroll-contact',
+    '.btn-nav-form',
+    '.nav-mobile-cta',
+    '.footer-wa-link'
+  ];
+
+  document.querySelectorAll(contactLeadSelectors.join(',')).forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+
+      // Cerrar menú móvil si está abierto
+      if (mainNav && mainNav.classList.contains('open')) {
+        mainNav.classList.remove('open');
+        if (menuToggle) {
+          menuToggle.classList.remove('active');
+          menuToggle.setAttribute('aria-expanded', 'false');
+        }
+        document.body.classList.remove('menu-open');
+      }
+
+      // Si el botón tiene un data-product, preseleccionarlo en el formulario
+      const prodAttr = btn.getAttribute('data-product');
+      if (prodAttr && contactProductSelect) {
+        contactProductSelect.value = prodAttr;
+      }
+
+      // Actualizar hash en URL sin salto brusco
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, document.title, '#contacto');
+      }
+
+      scrollToContactNameField(true);
+    });
+  });
+
+  // Si la página carga directamente con hash #contacto o #formulario-contacto
+  if (window.location.hash === '#contacto' || window.location.hash === '#formulario-contacto') {
+    setTimeout(() => {
+      scrollToContactNameField(false);
+    }, 150);
+  }
+
+  /* ==========================================================================
      Acordeón Desplegable de Detalles en Tarjetas de Catálogo
      ========================================================================== */
   const toggleButtons = document.querySelectorAll('.btn-toggle-details');

@@ -2650,6 +2650,12 @@ body.modal-open .floating-wa-btn,
 }
 
 /* Form Card Container */
+.form-card,
+#formulario-contacto,
+#contactFirstName {
+  scroll-margin-top: 86px;
+}
+
 .form-card {
   background: #FFFFFF;
   color: var(--color-text-main);
@@ -3000,11 +3006,20 @@ body.modal-open .floating-wa-btn,
 
 @media (max-width: 991px) {
   .contact-grid {
-    grid-template-columns: 1fr;
-    gap: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.25rem;
+  }
+  .contact-form-col {
+    order: 1;
+    width: 100%;
+  }
+  .contact-info-col {
+    order: 2;
+    width: 100%;
   }
   .form-card {
-    padding: 1.75rem;
+    padding: 1.75rem 1.25rem;
   }
   .form-row {
     grid-template-columns: 1fr;
