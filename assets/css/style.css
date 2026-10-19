@@ -1045,6 +1045,19 @@ body.menu-open {
   width: 100%;
 }
 
+.product-card.is-hidden {
+  display: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
 .product-card {
   background-color: #FFFFFF;
   border: 1px solid var(--color-border);
@@ -2184,7 +2197,7 @@ body.modal-open .floating-wa-btn,
   }
 
   /* Suite NóminaOrbe en móvil / tablet: apilado limpio 100% responsivo y sin cortes de imagen */
-  .product-card.featured-product {
+  .product-card.featured-product:not(.is-hidden) {
     grid-column: 1 / -1 !important;
     display: flex !important;
     flex-direction: column !important;

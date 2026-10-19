@@ -208,15 +208,18 @@ document.addEventListener('DOMContentLoaded', () => {
       catalogGrid.setAttribute('data-active-filter', filterValue);
     }
 
-    // Filtrar tarjetas
+    // Filtrar tarjetas garantizando colapso total de espacio sin huecos en blanco
     productCards.forEach(card => {
       const cardCategory = card.getAttribute('data-category');
-      if (filterValue === 'all' || cardCategory === filterValue) {
-        card.style.display = card.classList.contains('featured-product') ? 'grid' : 'flex';
+      const isVisible = (filterValue === 'all' || cardCategory === filterValue);
+      if (isVisible) {
+        card.classList.remove('is-hidden');
+        card.style.removeProperty('display');
         card.style.opacity = '1';
         card.style.transform = 'translateY(0)';
       } else {
-        card.style.display = 'none';
+        card.classList.add('is-hidden');
+        card.style.setProperty('display', 'none', 'important');
         card.style.opacity = '0';
         card.style.transform = 'translateY(10px)';
       }
@@ -310,17 +313,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Desplazamiento suave con cálculo dinámico exacto de altura del encabezado sticky
       setTimeout(() => {
-        const catalogSection = document.getElementById('catalogo');
-        if (catalogSection) {
-          const headerElem = document.getElementById('header');
-          const headerHeight = headerElem ? headerElem.offsetHeight : 76;
-          const targetPos = catalogSection.getBoundingClientRect().top + window.pageYOffset - headerHeight - 12;
+        const headerElem = document.getElementById('header');
+        const headerHeight = headerElem ? headerElem.offsetHeight : 76;
+        let targetElement = document.getElementById('catalogo');
+        
+        if (filterTarget !== 'all') {
+          const filterBar = document.querySelector('.catalog-filter-bar');
+          targetElement = filterBar || targetElement;
+        }
+
+        if (targetElement) {
+          const targetPos = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight - 16;
           window.scrollTo({
             top: targetPos,
             behavior: 'smooth'
           });
         }
-      }, 30);
+      }, 50);
 
       // Actualizar estado activo en la barra de navegación
       const allTopNavLinks = document.querySelectorAll('.header .nav-link');
