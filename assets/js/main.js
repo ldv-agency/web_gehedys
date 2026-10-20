@@ -897,14 +897,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const company = (document.getElementById('modalCompany')?.value || '').trim();
       const phone = (document.getElementById('modalPhone')?.value || '').trim();
       const email = (document.getElementById('modalEmail')?.value || '').trim();
+      const paymentMethod = (document.getElementById('modalPaymentMethod')?.value || '').trim();
       const message = (document.getElementById('modalMessage')?.value || '').trim();
       const productName = modalProductBarName ? modalProductBarName.textContent : 'el sistema solicitado';
       const productId = modalHiddenProduct ? modalHiddenProduct.value : '';
 
-      if (!firstName || !lastName || !company || !phone || !email) {
+      if (!firstName || !lastName || !company || !phone || !email || !paymentMethod) {
         if (modalProductFeedback) {
           modalProductFeedback.className = 'form-feedback error';
-          modalProductFeedback.textContent = 'Por favor complete todos los campos obligatorios marcados con (*).';
+          modalProductFeedback.textContent = 'Por favor complete todos los campos obligatorios (*) y seleccione el método de pago.';
           modalProductFeedback.style.display = 'block';
         }
         return;
@@ -978,6 +979,7 @@ document.addEventListener('DOMContentLoaded', () => {
       sessionStorage.setItem('lead_capacity', leadCapacity);
       sessionStorage.setItem('lead_frequency', leadFrequency);
       sessionStorage.setItem('lead_price', leadPrice);
+      sessionStorage.setItem('lead_payment_method', paymentMethod);
 
       // Enviar datos al Webhook n8n (adjuntando automáticamente todos los UTMs)
       if (window.UtmTracker) {
@@ -994,6 +996,7 @@ document.addEventListener('DOMContentLoaded', () => {
             staff: leadCapacity,
             frequency: leadFrequency,
             price: leadPrice,
+            paymentMethod: paymentMethod,
             message,
             formType: 'product_modal'
           });
@@ -1104,6 +1107,7 @@ document.addEventListener('DOMContentLoaded', () => {
       sessionStorage.setItem('lead_capacity', leadCapacity);
       sessionStorage.setItem('lead_frequency', leadFrequency);
       sessionStorage.setItem('lead_price', leadPrice);
+      sessionStorage.removeItem('lead_payment_method');
 
       // Enviar datos al Webhook n8n (adjuntando automáticamente todos los UTMs)
       if (window.UtmTracker) {

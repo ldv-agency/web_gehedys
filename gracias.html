@@ -46,8 +46,8 @@
         <div style="font-weight: 700; color: #0B2545; margin-bottom: 0.5rem; font-size: 0.95rem;">Detalle de su consulta:</div>
         <div style="margin-bottom: 0.25rem;"><strong>Herramienta:</strong> <span id="summaryProduct">Suite NóminaOrbe</span></div>
         <div style="margin-bottom: 0.25rem;"><strong>Capacidad:</strong> <span id="summaryCapacity">Hasta 20 Trabajadores</span></div>
-        <div style="margin-bottom: 0.25rem;"><strong>Frecuencia:</strong> <span id="summaryFrequency">Semanal / Quincenal</span></div>
         <div><strong>Monto Referencial:</strong> <span id="summaryPrice" style="color: #0066CC; font-weight: 700;">$65 / año</span></div>
+        <div id="summaryPaymentRow" style="margin-top: 0.25rem; display: none;"><strong>Método de Pago:</strong> <span id="summaryPaymentMethod">Pago móvil</span></div>
       </div>
 
       <!-- Caja de Progreso y Conteo de 12 Segundos -->
@@ -124,22 +124,34 @@
       const summaryFrequency = document.getElementById('summaryFrequency');
       const summaryPrice = document.getElementById('summaryPrice');
 
+      const leadPaymentMethod = sessionStorage.getItem('lead_payment_method') || '';
+      const summaryPaymentRow = document.getElementById('summaryPaymentRow');
+      const summaryPaymentMethod = document.getElementById('summaryPaymentMethod');
+
       if (leadNameDisplay) leadNameDisplay.textContent = leadName;
       if (leadProductDisplay) leadProductDisplay.textContent = leadProduct;
       if (summaryProduct) summaryProduct.textContent = leadProduct;
       if (summaryCapacity) summaryCapacity.textContent = leadCapacity;
       if (summaryFrequency) summaryFrequency.textContent = leadFrequency;
       if (summaryPrice) summaryPrice.textContent = leadPrice;
+      if (leadPaymentMethod && summaryPaymentRow && summaryPaymentMethod) {
+        summaryPaymentMethod.textContent = leadPaymentMethod;
+        summaryPaymentRow.style.display = 'block';
+      }
 
       // Mensaje estructurado exacto solicitado por la Lcda. Gehydis Echenique
-      const waMsg = `Hola! Mi nombre es ${leadName}.
+      let waMsg = `Hola! Mi nombre es ${leadName}.
 
 Vengo de tu página de ventas y estoy interesado en la herramienta: ${leadProduct}.
 * Capacidad: ${leadCapacity}
 * Frecuencia: ${leadFrequency}
-* Monto Total a Pagar: ${leadPrice}
+* Monto Total a Pagar: ${leadPrice}`;
 
-¿Me puedes asesorar al respecto?`;
+      if (leadPaymentMethod) {
+        waMsg += `\n* Método de Pago: ${leadPaymentMethod}`;
+      }
+
+      waMsg += `\n\n¿Me puedes asesorar al respecto?`;
 
       const waUrl = 'https://wa.me/' + GEHYDIS_WHATSAPP + '?text=' + encodeURIComponent(waMsg);
 

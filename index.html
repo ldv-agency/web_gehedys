@@ -1343,9 +1343,21 @@
             </div>
           </div>
 
-          <div class="form-group">
-            <label for="modalEmail" class="form-label">Correo Electrónico *</label>
-            <input type="email" id="modalEmail" name="email" class="form-input" placeholder="ejemplo@correo.com" required>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="modalEmail" class="form-label">Correo Electrónico *</label>
+              <input type="email" id="modalEmail" name="email" class="form-input" placeholder="ejemplo@correo.com" required>
+            </div>
+            <div class="form-group">
+              <label for="modalPaymentMethod" class="form-label">Método de Pago *</label>
+              <select id="modalPaymentMethod" name="paymentMethod" class="form-select" required>
+                <option value="" disabled selected>Seleccione método de pago...</option>
+                <option value="Pago móvil">Pago móvil</option>
+                <option value="Transferencia bancaria">Transferencia bancaria</option>
+                <option value="Binance">Binance</option>
+                <option value="Zinli">Zinli</option>
+              </select>
+            </div>
           </div>
 
           <div class="form-group">
