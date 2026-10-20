@@ -478,7 +478,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const w = item.querySelector('.tier-workers')?.textContent.trim() || '';
       const p = item.querySelector('.tier-price')?.textContent.replace('/ año', '').trim() || '';
       if (suiteModalBtn && p) {
-        suiteModalBtn.setAttribute('data-product-price', `${p} / año (${w})`);
+        suiteModalBtn.setAttribute('data-product-price', `${p} / año`);
+      }
+      const planSelect = document.getElementById('modalPlanSelect');
+      if (planSelect) {
+        if (w.includes('10')) planSelect.value = 'Hasta 10 trabajadores';
+        else if (w.includes('20')) planSelect.value = 'Hasta 20 trabajadores';
+        else if (w.includes('50')) planSelect.value = 'Hasta 50 trabajadores';
+        else if (w.includes('100')) planSelect.value = 'Hasta 100 trabajadores';
       }
     });
   });
@@ -763,11 +770,54 @@ document.addEventListener('DOMContentLoaded', () => {
       contactProductSelect.value = id;
     }
 
+    // Configurar método de pago: Ocultar para botón flotante de WhatsApp, mostrar SOLO en formularios del catálogo
+    const emailPaymentRow = document.getElementById('modalEmailPaymentRow');
+    const paymentGroup = document.getElementById('modalPaymentGroup');
+    const paymentMethodSelect = document.getElementById('modalPaymentMethod');
+    if (emailPaymentRow && paymentGroup && paymentMethodSelect) {
+      if (isWaDirect) {
+        paymentGroup.style.display = 'none';
+        paymentMethodSelect.required = false;
+        paymentMethodSelect.value = '';
+        emailPaymentRow.classList.add('single-col');
+      } else {
+        paymentGroup.style.display = 'flex';
+        paymentMethodSelect.required = true;
+        emailPaymentRow.classList.remove('single-col');
+      }
+    }
+
+    // Configurar selector de escala / plan para Suite NóminaOrbe
+    const planRow = document.getElementById('modalPlanRow');
+    const planSelect = document.getElementById('modalPlanSelect');
+    if (planRow && planSelect) {
+      if (id === 'suite-nomina') {
+        planRow.style.display = 'flex';
+        // Sincronizar con el tier activo de la tarjeta si existe
+        const activeTier = document.querySelector('.pricing-tiers-grid .tier-item.active');
+        if (activeTier) {
+          const w = activeTier.querySelector('.tier-workers')?.textContent.trim() || '';
+          if (w.includes('10')) planSelect.value = 'Hasta 10 trabajadores';
+          else if (w.includes('20')) planSelect.value = 'Hasta 20 trabajadores';
+          else if (w.includes('50')) planSelect.value = 'Hasta 50 trabajadores';
+          else if (w.includes('100')) planSelect.value = 'Hasta 100 trabajadores';
+        }
+        const selectedOpt = planSelect.options[planSelect.selectedIndex];
+        if (selectedOpt && modalProductBarPrice) {
+          modalProductBarPrice.textContent = selectedOpt.getAttribute('data-price') || '$65 / año';
+        }
+      } else {
+        planRow.style.display = 'none';
+      }
+    }
+
     // Configurar visibilidad y valor por defecto de la frecuencia de pago
     const freqRow = document.getElementById('modalFrequencyRow');
     const freqSelect = document.getElementById('modalFrequency');
     if (freqRow && freqSelect) {
-      if (id === 'suite-nomina' || id === 'colegios-docentes' || id === 'combo-colegios') {
+      if (isWaDirect) {
+        freqRow.style.display = 'none';
+      } else if (id === 'suite-nomina' || id === 'colegios-docentes' || id === 'combo-colegios') {
         freqRow.style.display = 'flex';
         freqSelect.value = 'Quincenal';
       } else {
@@ -864,6 +914,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Event listener para actualizar el precio dinámicamente al cambiar de plan en el modal
+  const modalPlanSelect = document.getElementById('modalPlanSelect');
+  if (modalPlanSelect) {
+    modalPlanSelect.addEventListener('change', () => {
+      const selectedOpt = modalPlanSelect.options[modalPlanSelect.selectedIndex];
+      if (selectedOpt) {
+        const p = selectedOpt.getAttribute('data-price');
+        const barPrice = document.getElementById('modalProductBarPrice');
+        if (barPrice && p) {
+          barPrice.textContent = p;
+        }
+      }
+    });
+  }
+
   // Botón dentro del visor de capturas (Lightbox)
   const modalLightboxFormBtn = document.getElementById('modalLightboxFormBtn');
   if (modalLightboxFormBtn) {
@@ -915,10 +980,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const productName = modalProductBarName ? modalProductBarName.textContent : 'el sistema solicitado';
       const productId = modalHiddenProduct ? modalHiddenProduct.value : '';
 
-      if (!firstName || !lastName || !company || !phone || !email || !paymentMethod) {
+      const isPaymentRequired = document.getElementById('modalPaymentGroup')?.style.display !== 'none';
+      if (!firstName || !lastName || !company || !phone || !email || (isPaymentRequired && !paymentMethod)) {
         if (modalProductFeedback) {
           modalProductFeedback.className = 'form-feedback error';
-          modalProductFeedback.textContent = 'Por favor complete todos los campos obligatorios (*) y seleccione el método de pago.';
+          modalProductFeedback.textContent = isPaymentRequired 
+            ? 'Por favor complete todos los campos obligatorios (*) y seleccione el método de pago.' 
+            : 'Por favor complete los campos obligatorios (*) para continuar.';
           modalProductFeedback.style.display = 'block';
         }
         return;
@@ -943,7 +1011,15 @@ document.addEventListener('DOMContentLoaded', () => {
       let leadFrequency = chosenFrequency || 'Quincenal';
       let leadPrice = currentModalProductPrice || (modalProductBarPrice ? modalProductBarPrice.textContent : '$65 / año');
 
-      if (productId === 'colegios-docentes') {
+      if (productId === 'suite-nomina') {
+        const planSelect = document.getElementById('modalPlanSelect');
+        if (planSelect) {
+          const selectedOpt = planSelect.options[planSelect.selectedIndex];
+          leadCapacity = selectedOpt.getAttribute('data-capacity') || selectedOpt.value;
+          leadPrice = selectedOpt.getAttribute('data-price') || '$65 / año';
+        }
+        leadFrequency = chosenFrequency || 'Quincenal';
+      } else if (productId === 'colegios-docentes') {
         leadCapacity = 'Personal Docente por Horas';
         leadFrequency = chosenFrequency || 'Quincenal';
         leadPrice = '$97 Licencia Anual';
@@ -979,15 +1055,6 @@ document.addEventListener('DOMContentLoaded', () => {
         leadCapacity = 'Acceso Formativo';
         leadFrequency = 'Acceso Permanente';
         leadPrice = '$17 Acceso + Material';
-      } else if (productId === 'suite-nomina') {
-        leadFrequency = chosenFrequency || 'Quincenal';
-        const activeTier = document.querySelector('.pricing-tiers-grid .tier-item.active');
-        if (activeTier) {
-          const w = activeTier.querySelector('.tier-workers')?.textContent.trim();
-          const p = activeTier.querySelector('.tier-price')?.textContent.replace('/ año', '').trim();
-          if (w) leadCapacity = w;
-          if (p) leadPrice = `${p} / año`;
-        }
       }
 
       // Guardar información del lead para la página de agradecimiento
@@ -1001,7 +1068,12 @@ document.addEventListener('DOMContentLoaded', () => {
       sessionStorage.setItem('lead_capacity', leadCapacity);
       sessionStorage.setItem('lead_frequency', leadFrequency);
       sessionStorage.setItem('lead_price', leadPrice);
-      sessionStorage.setItem('lead_payment_method', paymentMethod);
+      
+      if (isPaymentRequired && paymentMethod) {
+        sessionStorage.setItem('lead_payment_method', paymentMethod);
+      } else {
+        sessionStorage.removeItem('lead_payment_method');
+      }
 
       // Enviar datos al Webhook n8n (adjuntando automáticamente todos los UTMs)
       if (window.UtmTracker) {

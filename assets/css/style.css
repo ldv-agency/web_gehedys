@@ -2693,6 +2693,10 @@ body.modal-open .floating-wa-btn,
   gap: 1.25rem;
 }
 
+.form-row.single-col {
+  grid-template-columns: 1fr;
+}
+
 .form-group {
   display: flex;
   flex-direction: column;

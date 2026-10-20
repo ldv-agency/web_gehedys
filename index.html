@@ -1363,12 +1363,12 @@
             </div>
           </div>
 
-          <div class="form-row">
-            <div class="form-group">
+          <div class="form-row" id="modalEmailPaymentRow">
+            <div class="form-group" id="modalEmailGroup">
               <label for="modalEmail" class="form-label">Correo Electrónico *</label>
               <input type="email" id="modalEmail" name="email" class="form-input" placeholder="ejemplo@correo.com" required>
             </div>
-            <div class="form-group">
+            <div class="form-group" id="modalPaymentGroup">
               <label for="modalPaymentMethod" class="form-label">Método de Pago *</label>
               <select id="modalPaymentMethod" name="paymentMethod" class="form-select" required>
                 <option value="" disabled selected>Seleccione método de pago...</option>
@@ -1376,6 +1376,20 @@
                 <option value="Transferencia bancaria">Transferencia bancaria</option>
                 <option value="Binance">Binance</option>
                 <option value="Zinli">Zinli</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Selector de Escala de Trabajadores y Precio para Suite NóminaOrbe -->
+          <div class="form-row" id="modalPlanRow" style="display: none;">
+            <div class="form-group" style="width: 100%;">
+              <label for="modalPlanSelect" class="form-label" id="modalPlanLabel">Escala de Trabajadores y Precio Anual *</label>
+              <select id="modalPlanSelect" name="plan" class="form-select">
+                <option value="Hasta 10 trabajadores" data-price="$45 / año" data-capacity="Hasta 10 trabajadores">Hasta 10 trabajadores — $45 / año</option>
+                <option value="Hasta 20 trabajadores" data-price="$65 / año" data-capacity="Hasta 20 trabajadores" selected>Hasta 20 trabajadores — $65 / año (Más solicitada)</option>
+                <option value="Hasta 50 trabajadores" data-price="$89 / año" data-capacity="Hasta 50 trabajadores">Hasta 50 trabajadores — $89 / año</option>
+                <option value="Hasta 100 trabajadores" data-price="$127 / año" data-capacity="Hasta 100 trabajadores">Hasta 100 trabajadores — $127 / año</option>
+                <option value="Más de 100 trabajadores" data-price="A cotizar a medida" data-capacity="Más de 100 trabajadores">Más de 100 trabajadores — Cotización a medida</option>
               </select>
             </div>
           </div>
