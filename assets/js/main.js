@@ -7,6 +7,9 @@
 document.addEventListener('DOMContentLoaded', () => {
   const GEHYDIS_WHATSAPP = '584220284363';
 
+  // Configuración de Webhook n8n para distribución a Telegram, GoHighLevel y Google Sheets
+  window.N8N_WEBHOOK_URL = window.N8N_WEBHOOK_URL || 'https://n8n.srv1402866.hstgr.cloud/webhook/prospectos_gehydis';
+
   // Actualizar enlaces de WhatsApp si existen
   const updateWhatsAppLinks = () => {
     const waButtons = document.querySelectorAll('.btn-whatsapp-action');
@@ -467,10 +470,16 @@ document.addEventListener('DOMContentLoaded', () => {
      Selector de Tiers en la Suite NóminaOrbe
      ========================================================================== */
   const tierItems = document.querySelectorAll('.pricing-tiers-grid .tier-item');
+  const suiteModalBtn = document.querySelector('.btn-open-product-modal[data-product-id="suite-nomina"]');
   tierItems.forEach(item => {
     item.addEventListener('click', () => {
       tierItems.forEach(t => t.classList.remove('active'));
       item.classList.add('active');
+      const w = item.querySelector('.tier-workers')?.textContent.trim() || '';
+      const p = item.querySelector('.tier-price')?.textContent.replace('/ año', '').trim() || '';
+      if (suiteModalBtn && p) {
+        suiteModalBtn.setAttribute('data-product-price', `${p} / año (${w})`);
+      }
     });
   });
 
@@ -519,7 +528,7 @@ document.addEventListener('DOMContentLoaded', () => {
       title: 'Suite NóminaOrbe en Excel (Semanal o Quincenal)',
       subtitle: 'Módulo de Nómina Empresarial, Cestaticket y Beneficios',
       waMessage: 'Hola Lcda. Gehydis, vi las capturas de la Suite NóminaOrbe y deseo cotizarla para mi empresa.',
-      info: 'El sistema consolida la carga de trabajadores, cálculo automático de deducciones de ley (IVSS, FAOV, INCES, RPE e ISLR), conversión a tasa oficial BCV, generación de archivo plano TXT para BANAVIH y emisión de 3 recibos formales en PDF.',
+      info: 'El sistema consolida la carga de trabajadores, cálculo de asignaciones, horas extras diurnas y horas extras nocturnas, deducciones de ley (IVSS, FAOV, RPE e ISLR), conversión de sueldo en divisas a Bolívares de acuerdo a la Tasa Oficial BCV, generación de TXT para declaración del FAOV (BANAVIH), generación de TXT para pagos bancarios y emisión de 3 recibos formales en PDF.',
       images: [
         {
           src: 'assets/img/sistemas/SUITE_NOMINAORBE_-_5_Resumen_de_Nomina_png.png',
@@ -570,7 +579,7 @@ document.addEventListener('DOMContentLoaded', () => {
     'modal-cxc': {
       title: 'Sistema de Cuentas por Cobrar para Colegios (CxC)',
       subtitle: 'Control Administrativo y Tableros Directivos Escolares',
-      waMessage: 'Hola Lcda. Gehydis, deseo información y demostración del Sistema de Cuentas por Cobrar para colegios ($260).',
+      waMessage: 'Hola Lcda. Gehydis, deseo información y demostración del Sistema de Cuentas por Cobrar para colegios ($197).',
       info: 'Supervise el registro de pagos de mensualidades, transferencias, Pago Móvil y efectivo en divisas. Genere estados de cuenta por estudiante y visualice tableros de dirección con ingresos bancarios, saldos pendientes por grado y mayores deudores.',
       images: [
         {
@@ -718,9 +727,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const formFeedback = document.getElementById('formFeedback');
   const contactProductSelect = document.getElementById('contactProduct');
 
+  let currentModalProductPrice = '';
+  let currentModalProductId = '';
+
   // Abrir Modal de Producto
   const openProductModal = (id, name, category, price) => {
     if (!modalProductForm) return;
+
+    currentModalProductPrice = price || '';
+    currentModalProductId = id || '';
 
     const isWaDirect = (id === 'asesoria-whatsapp');
 
@@ -865,7 +880,7 @@ document.addEventListener('DOMContentLoaded', () => {
         pId = 'colegios-cxc';
         pName = 'Sistema de Cuentas por Cobrar (Colegios)';
         pCat = 'Sector Educativo';
-        pPrice = '$260 Licencia Completa';
+        pPrice = '$197 Licencia Completa';
       }
 
       openProductModal(pId, pName, pCat, pPrice);
@@ -874,7 +889,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Enviar Formulario Específico de Producto
   if (productSpecificForm) {
-    productSpecificForm.addEventListener('submit', (e) => {
+    productSpecificForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const firstName = (document.getElementById('modalFirstName')?.value || '').trim();
@@ -884,6 +899,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const email = (document.getElementById('modalEmail')?.value || '').trim();
       const message = (document.getElementById('modalMessage')?.value || '').trim();
       const productName = modalProductBarName ? modalProductBarName.textContent : 'el sistema solicitado';
+      const productId = modalHiddenProduct ? modalHiddenProduct.value : '';
 
       if (!firstName || !lastName || !company || !phone || !email) {
         if (modalProductFeedback) {
@@ -896,6 +912,61 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const fullName = `${firstName} ${lastName}`;
 
+      // Mostrar estado de carga inmediato en el botón
+      const submitBtn = productSpecificForm.querySelector('button[type="submit"]');
+      if (submitBtn) {
+        submitBtn.classList.add('btn-loading');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-inline"></span> Registrando solicitud...';
+      }
+
+      // Determinar Capacidad, Frecuencia y Monto para el formato de WhatsApp requerido por Gehydis
+      let leadCapacity = 'Hasta 20 Trabajadores';
+      let leadFrequency = 'Semanal / Quincenal';
+      let leadPrice = currentModalProductPrice || (modalProductBarPrice ? modalProductBarPrice.textContent : '$65 / año');
+
+      if (productId === 'colegios-docentes') {
+        leadCapacity = 'Personal Docente por Horas';
+        leadFrequency = 'Semanal / Quincenal';
+        leadPrice = '$97 Licencia Anual';
+      } else if (productId === 'colegios-cxc') {
+        leadCapacity = 'Institución Educativa (Alumnos / Grados)';
+        leadFrequency = 'Licencia Completa';
+        leadPrice = '$197 Licencia Completa';
+      } else if (productId === 'utilidades') {
+        leadCapacity = 'Personal de la Empresa';
+        leadFrequency = 'Pago Único';
+        leadPrice = '$17 Actualizada';
+      } else if (productId === 'cuentas-por-pagar') {
+        leadCapacity = 'Gestión Proveedores y Tesorería';
+        leadFrequency = 'Pago Único';
+        leadPrice = '$27 Pago Único';
+      } else if (productId === 'liquidacion') {
+        leadCapacity = 'Cálculo de Personal';
+        leadFrequency = 'Pago Único';
+        leadPrice = '$17 Herramienta Excel';
+      } else if (productId === 'fondo-pensiones') {
+        leadCapacity = 'Declaración DPP';
+        leadFrequency = 'Pago Único';
+        leadPrice = '$12 Plantilla Formulada';
+      } else if (productId === 'vacaciones') {
+        leadCapacity = 'Personal de la Empresa';
+        leadFrequency = 'Pago Único';
+        leadPrice = '$12 Formato Excel';
+      } else if (productId === 'masterclass-ingreso' || productId === 'masterclass-parafiscales') {
+        leadCapacity = 'Acceso Formativo';
+        leadFrequency = 'Acceso Permanente';
+        leadPrice = '$17 Acceso + Material';
+      } else if (productId === 'suite-nomina') {
+        const activeTier = document.querySelector('.pricing-tiers-grid .tier-item.active');
+        if (activeTier) {
+          const w = activeTier.querySelector('.tier-workers')?.textContent.trim();
+          const p = activeTier.querySelector('.tier-price')?.textContent.replace('/ año', '').trim();
+          if (w) leadCapacity = w;
+          if (p) leadPrice = `${p} / año`;
+        }
+      }
+
       // Guardar información del lead para la página de agradecimiento
       sessionStorage.setItem('lead_name', fullName);
       sessionStorage.setItem('lead_company', company);
@@ -904,6 +975,32 @@ document.addEventListener('DOMContentLoaded', () => {
       sessionStorage.setItem('lead_product', productName);
       sessionStorage.setItem('lead_message', message);
       sessionStorage.setItem('lead_source', 'product_modal');
+      sessionStorage.setItem('lead_capacity', leadCapacity);
+      sessionStorage.setItem('lead_frequency', leadFrequency);
+      sessionStorage.setItem('lead_price', leadPrice);
+
+      // Enviar datos al Webhook n8n (adjuntando automáticamente todos los UTMs)
+      if (window.UtmTracker) {
+        try {
+          await window.UtmTracker.sendLeadToWebhook({
+            firstName,
+            lastName,
+            fullName,
+            company,
+            phone,
+            email,
+            product: productName,
+            productId: productId,
+            staff: leadCapacity,
+            frequency: leadFrequency,
+            price: leadPrice,
+            message,
+            formType: 'product_modal'
+          });
+        } catch (webhookErr) {
+          console.warn('[Lead] Error en webhook, continuando:', webhookErr);
+        }
+      }
 
       // Evento de lead para analítica
       window.dataLayer = window.dataLayer || [];
@@ -913,22 +1010,14 @@ document.addEventListener('DOMContentLoaded', () => {
         lead_type: 'product_modal'
       });
 
-      // Mostrar estado de carga y redirigir a gracias.html
-      const submitBtn = productSpecificForm.querySelector('button[type="submit"]');
-      if (submitBtn) {
-        submitBtn.classList.add('btn-loading');
-        submitBtn.innerHTML = '<span class="spinner-inline"></span> Procesando solicitud...';
-      }
-
-      setTimeout(() => {
-        window.location.href = 'gracias.html';
-      }, 600);
+      // Redirigir a gracias.html
+      window.location.href = 'gracias.html';
     });
   }
 
   // Enviar Formulario Principal de la Página
   if (mainContactForm) {
-    mainContactForm.addEventListener('submit', (e) => {
+    mainContactForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const firstName = (document.getElementById('contactFirstName')?.value || '').trim();
@@ -939,6 +1028,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const message = (document.getElementById('contactMessage')?.value || '').trim();
       const productSelect = document.getElementById('contactProduct');
       const productText = productSelect && productSelect.selectedIndex >= 0 ? productSelect.options[productSelect.selectedIndex].text : 'solución seleccionada';
+      const productId = productSelect ? productSelect.value : '';
+      const staffSelect = document.getElementById('contactStaff');
+      const staffText = staffSelect && staffSelect.selectedIndex >= 0 ? staffSelect.options[staffSelect.selectedIndex].text : 'No especificado';
 
       if (!firstName || !lastName || !company || !phone || !email || !productSelect?.value) {
         if (formFeedback) {
@@ -951,6 +1043,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const fullName = `${firstName} ${lastName}`;
 
+      // Mostrar estado de carga inmediato en el botón
+      const submitBtn = mainContactForm.querySelector('button[type="submit"]');
+      if (submitBtn) {
+        submitBtn.classList.add('btn-loading');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner-inline"></span> Registrando requerimiento...';
+      }
+
+      // Determinar Capacidad, Frecuencia y Monto para el formato de WhatsApp requerido por Gehydis
+      let leadCapacity = staffText || '11 a 20 trabajadores';
+      let leadFrequency = 'Semanal / Quincenal';
+      let leadPrice = 'A cotizar según requerimiento';
+
+      if (productId === 'suite-nomina') {
+        leadFrequency = 'Semanal / Quincenal';
+        if (leadCapacity.includes('10')) leadPrice = '$45 / año';
+        else if (leadCapacity.includes('20')) leadPrice = '$65 / año';
+        else if (leadCapacity.includes('50')) leadPrice = '$89 / año';
+        else if (leadCapacity.includes('100') && !leadCapacity.includes('Más')) leadPrice = '$127 / año';
+        else if (leadCapacity.includes('Más')) leadPrice = 'A medida bajo cotización';
+        else leadPrice = 'Desde $45 / año';
+      } else if (productId === 'colegios-docentes') {
+        leadFrequency = 'Semanal / Quincenal';
+        leadPrice = '$97 Licencia Anual';
+      } else if (productId === 'colegios-cxc') {
+        leadFrequency = 'Licencia Completa';
+        leadPrice = '$197 Licencia Completa';
+      } else if (productId === 'combo-colegios') {
+        leadFrequency = 'Licencia Institucional';
+        leadPrice = '$260 Combo Docente + CxC';
+      } else if (productId === 'cuentas-por-pagar') {
+        leadFrequency = 'Pago Único';
+        leadPrice = '$27 Pago Único';
+      } else if (productId === 'utilidades') {
+        leadFrequency = 'Pago Único';
+        leadPrice = '$17 Actualizada';
+      } else if (productId === 'liquidacion') {
+        leadFrequency = 'Pago Único';
+        leadPrice = '$17 Herramienta Excel';
+      } else if (productId === 'fondo-pensiones') {
+        leadFrequency = 'Pago Único';
+        leadPrice = '$12 Plantilla Formulada';
+      } else if (productId === 'vacaciones') {
+        leadFrequency = 'Pago Único';
+        leadPrice = '$12 Formato Excel';
+      } else if (productId.includes('masterclass')) {
+        leadFrequency = 'Acceso Permanente';
+        leadPrice = '$17 Acceso + Material';
+      }
+
       // Guardar información del lead para la página de agradecimiento
       sessionStorage.setItem('lead_name', fullName);
       sessionStorage.setItem('lead_company', company);
@@ -959,6 +1101,32 @@ document.addEventListener('DOMContentLoaded', () => {
       sessionStorage.setItem('lead_product', productText);
       sessionStorage.setItem('lead_message', message);
       sessionStorage.setItem('lead_source', 'main_contact_form');
+      sessionStorage.setItem('lead_capacity', leadCapacity);
+      sessionStorage.setItem('lead_frequency', leadFrequency);
+      sessionStorage.setItem('lead_price', leadPrice);
+
+      // Enviar datos al Webhook n8n (adjuntando automáticamente todos los UTMs)
+      if (window.UtmTracker) {
+        try {
+          await window.UtmTracker.sendLeadToWebhook({
+            firstName,
+            lastName,
+            fullName,
+            company,
+            phone,
+            email,
+            product: productText,
+            productId: productId,
+            staff: leadCapacity,
+            frequency: leadFrequency,
+            price: leadPrice,
+            message,
+            formType: 'main_contact_form'
+          });
+        } catch (webhookErr) {
+          console.warn('[Lead] Error en webhook, continuando:', webhookErr);
+        }
+      }
 
       // Evento de lead para analítica
       window.dataLayer = window.dataLayer || [];
@@ -968,16 +1136,8 @@ document.addEventListener('DOMContentLoaded', () => {
         lead_type: 'main_contact_form'
       });
 
-      // Mostrar estado de carga y redirigir a gracias.html
-      const submitBtn = mainContactForm.querySelector('button[type="submit"]');
-      if (submitBtn) {
-        submitBtn.classList.add('btn-loading');
-        submitBtn.innerHTML = '<span class="spinner-inline"></span> Procesando requerimiento...';
-      }
-
-      setTimeout(() => {
-        window.location.href = 'gracias.html';
-      }, 600);
+      // Redirigir a gracias.html
+      window.location.href = 'gracias.html';
     });
   }
 

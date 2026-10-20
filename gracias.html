@@ -16,7 +16,7 @@
   <header class="thankyou-header">
     <div class="container text-center">
       <a href="index.html" class="brand-link" aria-label="Gehydis Echenique - Consultor Administrativo">
-        <img src="assets/img/logos/ge_logo_hero.png" alt="Gehydis Echenique - Consultor Administrativo" class="brand-logo" width="60" height="54">
+        <img src="assets/img/logos/ge_logo_hero.png" alt="Gehydis Echenique - Consultor Administrativo" class="brand-logo" width="91" height="60">
       </a>
     </div>
   </header>
@@ -40,6 +40,15 @@
         Estimado(a) <strong id="leadNameDisplay">Cliente</strong>, hemos recibido sus requerimientos para 
         <strong id="leadProductDisplay">nuestros sistemas administrativos</strong>. La <strong>Lcda. Gehydis Echenique</strong> o su equipo técnico atenderá su consulta con total resguardo y rigor normativo.
       </p>
+
+      <!-- Resumen Estructurado del Requerimiento -->
+      <div class="thankyou-summary-card" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem; margin: 1.5rem 0; text-align: left; font-size: 0.92rem;">
+        <div style="font-weight: 700; color: #0B2545; margin-bottom: 0.5rem; font-size: 0.95rem;">Detalle de su consulta:</div>
+        <div style="margin-bottom: 0.25rem;"><strong>Herramienta:</strong> <span id="summaryProduct">Suite NóminaOrbe</span></div>
+        <div style="margin-bottom: 0.25rem;"><strong>Capacidad:</strong> <span id="summaryCapacity">Hasta 20 Trabajadores</span></div>
+        <div style="margin-bottom: 0.25rem;"><strong>Frecuencia:</strong> <span id="summaryFrequency">Semanal / Quincenal</span></div>
+        <div><strong>Monto Referencial:</strong> <span id="summaryPrice" style="color: #0066CC; font-weight: 700;">$65 / año</span></div>
+      </div>
 
       <!-- Caja de Progreso y Conteo de 12 Segundos -->
       <div class="countdown-box">
@@ -81,21 +90,57 @@
     </div>
   </footer>
 
+  <script src="assets/js/utm-tracker.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const GEHYDIS_WHATSAPP = '584220284363';
       const leadName = sessionStorage.getItem('lead_name') || 'Cliente';
       const leadCompany = sessionStorage.getItem('lead_company') || 'su empresa';
-      const leadProduct = sessionStorage.getItem('lead_product') || 'sus sistemas de nómina y cobranza';
+      const leadProduct = sessionStorage.getItem('lead_product') || 'Suite NóminaOrbe';
+      const leadCapacity = sessionStorage.getItem('lead_capacity') || 'Hasta 20 Trabajadores';
+      const leadFrequency = sessionStorage.getItem('lead_frequency') || 'Semanal / Quincenal';
+      const leadPrice = sessionStorage.getItem('lead_price') || '$65 / año';
+      const utmSource = sessionStorage.getItem('lead_utm_source') || '';
+      const utmCampaign = sessionStorage.getItem('lead_utm_campaign') || '';
+
+      // Evento de analítica de conversión con datos de UTM
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'thankyou_conversion',
+        lead_name: leadName,
+        lead_product: leadProduct,
+        lead_capacity: leadCapacity,
+        lead_frequency: leadFrequency,
+        lead_price: leadPrice,
+        utm_source: utmSource || 'directo',
+        utm_campaign: utmCampaign || 'organico_directo'
+      });
 
       // Actualizar datos visibles en pantalla
       const leadNameDisplay = document.getElementById('leadNameDisplay');
       const leadProductDisplay = document.getElementById('leadProductDisplay');
+      const summaryProduct = document.getElementById('summaryProduct');
+      const summaryCapacity = document.getElementById('summaryCapacity');
+      const summaryFrequency = document.getElementById('summaryFrequency');
+      const summaryPrice = document.getElementById('summaryPrice');
+
       if (leadNameDisplay) leadNameDisplay.textContent = leadName;
       if (leadProductDisplay) leadProductDisplay.textContent = leadProduct;
+      if (summaryProduct) summaryProduct.textContent = leadProduct;
+      if (summaryCapacity) summaryCapacity.textContent = leadCapacity;
+      if (summaryFrequency) summaryFrequency.textContent = leadFrequency;
+      if (summaryPrice) summaryPrice.textContent = leadPrice;
 
-      // Mensaje estructurado para WhatsApp
-      const waMsg = 'Hola Lcda. Gehydis, mi nombre es ' + leadName + ' de la empresa ' + leadCompany + '. Acabo de registrar la solicitud en su página web para la solución: ' + leadProduct + '. Deseo recibir asesoría formal.';
+      // Mensaje estructurado exacto solicitado por la Lcda. Gehydis Echenique
+      const waMsg = `Hola! Mi nombre es ${leadName}.
+
+Vengo de tu página de ventas y estoy interesado en la herramienta: ${leadProduct}.
+* Capacidad: ${leadCapacity}
+* Frecuencia: ${leadFrequency}
+* Monto Total a Pagar: ${leadPrice}
+
+¿Me puedes asesorar al respecto?`;
+
       const waUrl = 'https://wa.me/' + GEHYDIS_WHATSAPP + '?text=' + encodeURIComponent(waMsg);
 
       // Botón de acceso inmediato
