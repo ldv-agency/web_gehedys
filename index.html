@@ -10,6 +10,26 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="icon" type="image/png" href="assets/img/logos/isologo_azul.png">
+
+  <!-- Meta Pixel Code Oficial -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    
+    window.META_PIXEL_ID = window.META_PIXEL_ID || new URLSearchParams(window.location.search).get('pixel') || localStorage.getItem('meta_pixel_id') || '0000000000000000';
+    fbq('init', window.META_PIXEL_ID);
+    fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=0000000000000000&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
 </head>
 <body>
 
@@ -454,7 +474,7 @@
                 <span class="price-val">$197</span>
                 <span class="price-period">Licencia institucional completa para el colegio</span>
               </div>
-              <div class="price-extra">Opción de combo especial junto a Nómina Docente disponible</div>
+              <div class="price-extra">Combo Especial Colegios (Nómina Docente + CxC): <strong>$247</strong> (Ahorro de $47)</div>
             </div>
 
             <button type="button" class="btn-toggle-details" aria-expanded="false">
@@ -554,7 +574,7 @@
             <div class="product-pricing-box single-price-box">
               <div class="price-container">
                 <span class="price-val">$17</span>
-                <span class="price-period">Versión actualizada y garantizada</span>
+                <span class="price-period">Versión formulada conforme a la LOTTT</span>
               </div>
             </div>
 
@@ -622,7 +642,7 @@
                   <ul class="features-list">
                     <li>Aplicación simultánea de la garantía trimestral y el régimen retroactivo (Art. 142 LOTTT).</li>
                     <li>Cálculo de intereses sobre prestaciones acumuladas según tasas del BCV.</li>
-                    <li>Finiquito y recibo legal de liquidación detallado para evitar reclamos laborales.</li>
+                    <li>Finiquito y recibo legal de liquidación detallado para minimizar riesgos de controversias laborales.</li>
                   </ul>
                 </div>
               </div>
@@ -865,7 +885,7 @@
                 Mi formación como Licenciada en Administración (mención Recursos Materiales y Financieros) me permite combinar el rigor legal y contable con la eficiencia operativa. Sé lo desgastante que es ajustar manualmente los cálculos cada vez que cambia un decreto o depender de softwares genéricos que no responden a las exigencias reales de Venezuela.
               </p>
               <p>
-                Mi propósito es transformar esa complejidad en tranquilidad. A través de soluciones avanzadas y automatizadas en Excel, he creado herramientas como la <strong>Suite NóminaOrbe</strong> para que proceses tu nómina, Cestaticket, Bonificaciones, FAOV y retenciones en minutos, garantizando total precisión matemática y alineación legal sin pagar mensualidades recurrentes.
+                Mi propósito es transformar esa complejidad en tranquilidad. A través de soluciones avanzadas y automatizadas en Excel, he creado herramientas como la <strong>Suite NóminaOrbe</strong> para que proceses tu nómina, Cestaticket, Bonificaciones, FAOV y retenciones en minutos, con alta precisión matemática y diseñada para minimizar riesgos laborales y fiscales sin pagar mensualidades recurrentes.
               </p>
             </div>
 
@@ -944,7 +964,7 @@
             <div class="step-number">04</div>
             <h3 class="step-title">Entrega y Puesta en Marcha</h3>
             <p class="step-desc">
-              Recibe los archivos formulados directamente en su correo con su clave de activación de licencia y soporte técnico de acompañamiento.
+              Recibe los archivos en su correo, envía el código único de su equipo (Machine ID) y recibe su clave de activación personalizada con soporte técnico de acompañamiento.
             </p>
           </div>
         </div>
@@ -1043,7 +1063,7 @@
                       <option value="suite-nomina">Suite NóminaOrbe (Nómina Empresarial)</option>
                       <option value="colegios-docentes">Suite Nómina por Horas (Sector Educativo - Docentes)</option>
                       <option value="colegios-cxc">Sistema de Cuentas por Cobrar (Colegios - CxC)</option>
-                      <option value="combo-colegios">Combo Educativo (Nómina Docente + CxC)</option>
+                      <option value="combo-colegios">Combo Educativo (Nómina Docente + CxC) - $247</option>
                       <option value="cuentas-por-pagar">Sistema de Cuentas por Pagar y Flujo de Caja</option>
                       <option value="utilidades">Plantilla de Cálculo de Utilidades (Nueva Versión)</option>
                       <option value="liquidacion">Plantilla de Cálculo de Liquidación y Prestaciones</option>
@@ -1163,7 +1183,7 @@
             </button>
             <div class="faq-answer">
               <p>
-                Al ser usuaria y consultora laboral activa, la Lcda. Gehydis Echenique analiza de inmediato cada decreto publicado en Gaceta Oficial y suministra las instrucciones de ajuste o versiones actualizadas a los clientes con licencia activa, garantizando que su nómina siempre cumpla con la ley.
+                Al ser usuaria y consultora laboral activa, la Lcda. Gehydis Echenique analiza de inmediato cada decreto publicado en Gaceta Oficial y suministra las instrucciones de ajuste o versiones actualizadas a los clientes con licencia activa, diseñadas para minimizar riesgos y mantener su gestión de nómina alineada con la normativa vigente.
               </p>
             </div>
           </div>
@@ -1356,6 +1376,18 @@
                 <option value="Transferencia bancaria">Transferencia bancaria</option>
                 <option value="Binance">Binance</option>
                 <option value="Zinli">Zinli</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row" id="modalFrequencyRow">
+            <div class="form-group" style="width: 100%;">
+              <label for="modalFrequency" class="form-label" id="modalFrequencyLabel">Frecuencia de Pago de Nómina *</label>
+              <select id="modalFrequency" name="frequency" class="form-select">
+                <option value="Quincenal" selected>Quincenal</option>
+                <option value="Semanal">Semanal</option>
+                <option value="Mensual">Mensual</option>
+                <option value="Pago Único">Pago Único (Herramienta directa)</option>
               </select>
             </div>
           </div>

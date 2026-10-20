@@ -763,6 +763,19 @@ document.addEventListener('DOMContentLoaded', () => {
       contactProductSelect.value = id;
     }
 
+    // Configurar visibilidad y valor por defecto de la frecuencia de pago
+    const freqRow = document.getElementById('modalFrequencyRow');
+    const freqSelect = document.getElementById('modalFrequency');
+    if (freqRow && freqSelect) {
+      if (id === 'suite-nomina' || id === 'colegios-docentes' || id === 'combo-colegios') {
+        freqRow.style.display = 'flex';
+        freqSelect.value = 'Quincenal';
+      } else {
+        freqRow.style.display = 'none';
+        freqSelect.value = 'Pago Único';
+      }
+    }
+
     if (modalProductFeedback) {
       modalProductFeedback.style.display = 'none';
       modalProductFeedback.textContent = '';
@@ -921,19 +934,27 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.innerHTML = '<span class="spinner-inline"></span> Registrando solicitud...';
       }
 
+      // Obtener frecuencia seleccionada por el cliente en el modal
+      const frequencyInput = document.getElementById('modalFrequency');
+      let chosenFrequency = frequencyInput ? frequencyInput.value : '';
+
       // Determinar Capacidad, Frecuencia y Monto para el formato de WhatsApp requerido por Gehydis
       let leadCapacity = 'Hasta 20 Trabajadores';
-      let leadFrequency = 'Semanal / Quincenal';
+      let leadFrequency = chosenFrequency || 'Quincenal';
       let leadPrice = currentModalProductPrice || (modalProductBarPrice ? modalProductBarPrice.textContent : '$65 / año');
 
       if (productId === 'colegios-docentes') {
         leadCapacity = 'Personal Docente por Horas';
-        leadFrequency = 'Semanal / Quincenal';
+        leadFrequency = chosenFrequency || 'Quincenal';
         leadPrice = '$97 Licencia Anual';
       } else if (productId === 'colegios-cxc') {
         leadCapacity = 'Institución Educativa (Alumnos / Grados)';
         leadFrequency = 'Licencia Completa';
         leadPrice = '$197 Licencia Completa';
+      } else if (productId === 'combo-colegios') {
+        leadCapacity = 'Institución Educativa (Docentes + Cobranzas)';
+        leadFrequency = chosenFrequency || 'Quincenal';
+        leadPrice = '$247 Combo Docente + CxC (Ahorro $47)';
       } else if (productId === 'utilidades') {
         leadCapacity = 'Personal de la Empresa';
         leadFrequency = 'Pago Único';
@@ -959,6 +980,7 @@ document.addEventListener('DOMContentLoaded', () => {
         leadFrequency = 'Acceso Permanente';
         leadPrice = '$17 Acceso + Material';
       } else if (productId === 'suite-nomina') {
+        leadFrequency = chosenFrequency || 'Quincenal';
         const activeTier = document.querySelector('.pricing-tiers-grid .tier-item.active');
         if (activeTier) {
           const w = activeTier.querySelector('.tier-workers')?.textContent.trim();
@@ -1005,13 +1027,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-      // Evento de lead para analítica
+      // Evento de lead para analítica y Meta Pixel
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({
         event: 'generate_lead',
         product_name: productName,
         lead_type: 'product_modal'
       });
+
+      if (typeof fbq === 'function') {
+        fbq('track', 'Lead', {
+          content_name: productName,
+          content_category: leadCapacity,
+          value: parseFloat((leadPrice || '').replace(/[^0-9.]/g, '')) || 0,
+          currency: 'USD'
+        });
+      }
 
       // Redirigir a gracias.html
       window.location.href = 'gracias.html';
@@ -1075,7 +1106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         leadPrice = '$197 Licencia Completa';
       } else if (productId === 'combo-colegios') {
         leadFrequency = 'Licencia Institucional';
-        leadPrice = '$260 Combo Docente + CxC';
+        leadPrice = '$247 Combo Docente + CxC (Ahorro $47)';
       } else if (productId === 'cuentas-por-pagar') {
         leadFrequency = 'Pago Único';
         leadPrice = '$27 Pago Único';
@@ -1132,13 +1163,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-      // Evento de lead para analítica
+      // Evento de lead para analítica y Meta Pixel
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({
         event: 'generate_lead',
         product_name: productText,
         lead_type: 'main_contact_form'
       });
+
+      if (typeof fbq === 'function') {
+        fbq('track', 'Lead', {
+          content_name: productText,
+          content_category: leadCapacity,
+          value: parseFloat((leadPrice || '').replace(/[^0-9.]/g, '')) || 0,
+          currency: 'USD'
+        });
+      }
 
       // Redirigir a gracias.html
       window.location.href = 'gracias.html';
