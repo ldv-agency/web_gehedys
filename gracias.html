@@ -30,6 +30,15 @@
     src="https://www.facebook.com/tr?id=1354037500243697&ev=PageView&noscript=1"
   /></noscript>
   <!-- End Meta Pixel Code -->
+
+  <!-- Google tag (gtag.js) - Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-3H75L0XG7E"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-3H75L0XG7E');
+  </script>
 </head>
 <body class="thankyou-body">
 
@@ -146,6 +155,17 @@
           value: parseFloat(((leadPrice || '').match(/\d+(?:\.\d+)?/) || [])[0]) || 0,
           currency: 'USD'
         }, { eventID: leadEventId });
+      }
+
+      // Conversión para Google Analytics 4: una sola vez por lead (GA no deduplica si se recarga la página)
+      if (typeof gtag === 'function' && leadEventId && sessionStorage.getItem('lead_ga_sent') !== leadEventId) {
+        gtag('event', 'generate_lead', {
+          currency: 'USD',
+          value: parseFloat(((leadPrice || '').match(/\d+(?:\.\d+)?/) || [])[0]) || 0,
+          lead_source: utmSource || 'directo',
+          items: [{ item_name: leadProduct, item_category: leadCapacity }]
+        });
+        sessionStorage.setItem('lead_ga_sent', leadEventId);
       }
 
       // Actualizar datos visibles en pantalla

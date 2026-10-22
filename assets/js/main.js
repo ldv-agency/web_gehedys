@@ -245,6 +245,9 @@ document.addEventListener('DOMContentLoaded', () => {
         category_hash: meta.hash,
         page_title: meta.title
       });
+      if (typeof gtag === 'function') {
+        gtag('event', 'view_item_list', { item_list_id: meta.hash, item_list_name: meta.badge });
+      }
 
       window.dispatchEvent(new CustomEvent('catalog_filter_change', {
         detail: { filter: filterValue, title: meta.title, hash: meta.hash }
@@ -852,6 +855,13 @@ document.addEventListener('DOMContentLoaded', () => {
       price: price,
       page_title: newTitle
     });
+    if (typeof gtag === 'function') {
+      gtag('event', 'view_item', {
+        currency: 'USD',
+        value: parseFloat((String(price || '').match(/\d+(?:\.\d+)?/) || [])[0]) || 0,
+        items: [{ item_id: id, item_name: name, item_category: category }]
+      });
+    }
 
     window.dispatchEvent(new CustomEvent('product_selected', {
       detail: { id, name, category, price, title: newTitle, hash: newHash }
