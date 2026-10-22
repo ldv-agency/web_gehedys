@@ -280,6 +280,9 @@
         product: leadInfo.product || '',
         productId: leadInfo.productId || '',
         staff: leadInfo.staff || 'No especificado',
+        frequency: leadInfo.frequency || '',
+        price: leadInfo.price || '',
+        paymentMethod: leadInfo.paymentMethod || '',
         message: leadInfo.message || '',
         formType: leadInfo.formType || 'formulario_web',
 
