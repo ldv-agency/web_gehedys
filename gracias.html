@@ -215,5 +215,18 @@ Vengo de tu página de ventas y estoy interesado en la herramienta: ${leadProduc
       }, intervalMs);
     });
   </script>
+
+  <!-- GoHighLevel External Tracking (subcuenta Gehydis Consulting) - carga diferida -->
+  <script>
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        var s = document.createElement('script');
+        s.src = 'https://link.msgsndr.com/js/external-tracking.js';
+        s.setAttribute('data-tracking-id', 'tk_bec27defd5de4da38e9a5c8536c5bbd3');
+        s.async = true;
+        document.body.appendChild(s);
+      }, 1500);
+    });
+  </script>
 </body>
 </html>
