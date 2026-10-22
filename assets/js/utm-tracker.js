@@ -268,6 +268,16 @@
       const utms = this.getUtmData();
       const webhookUrl = window.N8N_WEBHOOK_URL || this.config.webhookUrl;
 
+      // Identificadores de Meta para deduplicar el evento Lead entre el Pixel (gracias.html)
+      // y la API de Conversiones (n8n): ambos usan el mismo event_id
+      const readCookie = (name) => {
+        const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+        return match ? decodeURIComponent(match[1]) : '';
+      };
+      const eventId = 'lead_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
+      const fbp = readCookie('_fbp');
+      const fbc = readCookie('_fbc') || (utms.fbclid ? 'fb.1.' + Date.now() + '.' + utms.fbclid : '');
+
       // Consolidar payload estructurado para n8n, GoHighLevel y Google Sheets
       const payload = {
         // Datos de Contacto
@@ -298,6 +308,11 @@
         gclid: utms.gclid,
         ttclid: utms.ttclid,
 
+        // Meta Pixel / API de Conversiones
+        event_id: eventId,
+        fbp: fbp,
+        fbc: fbc,
+
         // Metadatos de Navegación y Contexto
         landing_page: utms.landing_page,
         current_page: window.location.href,
@@ -313,6 +328,7 @@
         sessionStorage.setItem('lead_utm_source', payload.utm_source);
         sessionStorage.setItem('lead_utm_campaign', payload.utm_campaign);
         sessionStorage.setItem('lead_utm_medium', payload.utm_medium);
+        sessionStorage.setItem('lead_event_id', payload.event_id);
       } catch (e) {
         console.warn('[UtmTracker] Error guardando en sessionStorage:', e);
       }

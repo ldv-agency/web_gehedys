@@ -1107,14 +1107,7 @@ document.addEventListener('DOMContentLoaded', () => {
         lead_type: 'product_modal'
       });
 
-      if (typeof fbq === 'function') {
-        fbq('track', 'Lead', {
-          content_name: productName,
-          content_category: leadCapacity,
-          value: parseFloat((leadPrice || '').replace(/[^0-9.]/g, '')) || 0,
-          currency: 'USD'
-        });
-      }
+      // El evento Lead de Meta se dispara una sola vez en gracias.html (con event_id compartido con la API de Conversiones)
 
       // Redirigir a gracias.html
       window.location.href = 'gracias.html';
@@ -1243,14 +1236,7 @@ document.addEventListener('DOMContentLoaded', () => {
         lead_type: 'main_contact_form'
       });
 
-      if (typeof fbq === 'function') {
-        fbq('track', 'Lead', {
-          content_name: productText,
-          content_category: leadCapacity,
-          value: parseFloat((leadPrice || '').replace(/[^0-9.]/g, '')) || 0,
-          currency: 'USD'
-        });
-      }
+      // El evento Lead de Meta se dispara una sola vez en gracias.html (con event_id compartido con la API de Conversiones)
 
       // Redirigir a gracias.html
       window.location.href = 'gracias.html';

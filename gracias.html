@@ -22,12 +22,12 @@
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
     
-    window.META_PIXEL_ID = window.META_PIXEL_ID || new URLSearchParams(window.location.search).get('pixel') || localStorage.getItem('meta_pixel_id') || '0000000000000000';
+    window.META_PIXEL_ID = '1354037500243697';
     fbq('init', window.META_PIXEL_ID);
     fbq('track', 'PageView');
   </script>
   <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=0000000000000000&ev=PageView&noscript=1"
+    src="https://www.facebook.com/tr?id=1354037500243697&ev=PageView&noscript=1"
   /></noscript>
   <!-- End Meta Pixel Code -->
 </head>
@@ -136,14 +136,16 @@
         utm_campaign: utmCampaign || 'organico_directo'
       });
 
-      // Evento de conversión para Meta Pixel
-      if (typeof fbq === 'function') {
+      // Evento de conversión para Meta Pixel: solo si viene de un formulario enviado.
+      // Usa el mismo event_id que n8n manda por la API de Conversiones para que Meta lo deduplique.
+      const leadEventId = sessionStorage.getItem('lead_event_id');
+      if (typeof fbq === 'function' && leadEventId) {
         fbq('track', 'Lead', {
           content_name: leadProduct,
           content_category: leadCapacity,
-          value: parseFloat((leadPrice || '').replace(/[^0-9.]/g, '')) || 0,
+          value: parseFloat(((leadPrice || '').match(/\d+(?:\.\d+)?/) || [])[0]) || 0,
           currency: 'USD'
-        });
+        }, { eventID: leadEventId });
       }
 
       // Actualizar datos visibles en pantalla
