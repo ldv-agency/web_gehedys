@@ -278,6 +278,10 @@
       const fbp = readCookie('_fbp');
       const fbc = readCookie('_fbc') || (utms.fbclid ? 'fb.1.' + Date.now() + '.' + utms.fbclid : '');
 
+      // Señales anti-bots que n8n valida: honeypot (campo invisible) y tiempo desde que cargó la página
+      const honeypot = Array.from(document.querySelectorAll('input[name="hp_ref_code"]')).some((el) => el.value.trim() !== '');
+      const elapsedMs = Math.round(performance.now());
+
       // Consolidar payload estructurado para n8n, GoHighLevel y Google Sheets
       const payload = {
         // Datos de Contacto
@@ -312,6 +316,10 @@
         event_id: eventId,
         fbp: fbp,
         fbc: fbc,
+
+        // Anti-bots
+        hp: honeypot ? '1' : '',
+        elapsed_ms: elapsedMs,
 
         // Metadatos de Navegación y Contexto
         landing_page: utms.landing_page,

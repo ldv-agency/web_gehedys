@@ -1102,6 +1102,11 @@
                 </div>
 
                 <!-- Campos de Atribución UTM para n8n, GoHighLevel y Google Sheets -->
+                <!-- Honeypot anti-bots: invisible para personas, los bots lo llenan y n8n descarta el envío -->
+                <div class="hp-field" aria-hidden="true" style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;">
+                  <label for="mainWebsite">No llene este campo</label>
+                  <input type="text" id="mainWebsite" name="hp_ref_code" tabindex="-1" autocomplete="off" value="">
+                </div>
                 <input type="hidden" name="utm_source" id="mainUtmSource" value="">
                 <input type="hidden" name="utm_medium" id="mainUtmMedium" value="">
                 <input type="hidden" name="utm_campaign" id="mainUtmCampaign" value="">
@@ -1421,6 +1426,11 @@
           </div>
 
           <!-- Campos de Atribución UTM para n8n, GoHighLevel y Google Sheets -->
+          <!-- Honeypot anti-bots: invisible para personas, los bots lo llenan y n8n descarta el envío -->
+          <div class="hp-field" aria-hidden="true" style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;">
+            <label for="modalWebsite">No llene este campo</label>
+            <input type="text" id="modalWebsite" name="hp_ref_code" tabindex="-1" autocomplete="off" value="">
+          </div>
           <input type="hidden" name="utm_source" id="modalUtmSource" value="">
           <input type="hidden" name="utm_medium" id="modalUtmMedium" value="">
           <input type="hidden" name="utm_campaign" id="modalUtmCampaign" value="">

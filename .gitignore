@@ -6,7 +6,6 @@ node_modules/
 server.js
 package.json
 package-lock.json
-vercel.json
 
 # Exportaciones de prospectos/clientes: nunca publicarlas en la web
 *.csv
