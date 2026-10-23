@@ -744,9 +744,12 @@ document.addEventListener('DOMContentLoaded', () => {
   if (contactProductSelect && contactStaffSelect) {
     contactProductSelect.addEventListener('change', () => {
       if (PRODUCTOS_SIN_TRABAJADORES.includes(contactProductSelect.value)) {
+        // Fijo: el cliente no puede cambiarlo mientras tenga elegido uno de estos productos
         contactStaffSelect.value = 'no-aplica';
-      } else if (contactStaffSelect.value === 'no-aplica') {
-        contactStaffSelect.value = '';
+        contactStaffSelect.disabled = true;
+      } else {
+        contactStaffSelect.disabled = false;
+        if (contactStaffSelect.value === 'no-aplica') contactStaffSelect.value = '';
       }
     });
   }
