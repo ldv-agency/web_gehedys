@@ -1012,59 +1012,22 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.innerHTML = '<span class="spinner-inline"></span> Registrando solicitud...';
       }
 
-      // Obtener frecuencia seleccionada por el cliente en el modal
+      // Solo se registra lo que el cliente eligió o vio en el formulario: nada de valores inventados.
+      // Capacidad y frecuencia salen de los selectores visibles; el precio es el del producto que pidió.
+      const isVisible = (el) => !!el && el.offsetParent !== null;
+      const planSelect = document.getElementById('modalPlanSelect');
       const frequencyInput = document.getElementById('modalFrequency');
-      let chosenFrequency = frequencyInput ? frequencyInput.value : '';
 
-      // Determinar Capacidad, Frecuencia y Monto para el formato de WhatsApp requerido por Gehydis
-      let leadCapacity = 'Hasta 20 Trabajadores';
-      let leadFrequency = chosenFrequency || 'Quincenal';
-      let leadPrice = currentModalProductPrice || (modalProductBarPrice ? modalProductBarPrice.textContent : '$65 / año');
+      let leadCapacity = '';
+      let leadFrequency = isVisible(frequencyInput) ? frequencyInput.value : '';
+      let leadPrice = productId === 'asesoria-whatsapp' ? '' : (currentModalProductPrice || '');
 
-      if (productId === 'suite-nomina') {
-        const planSelect = document.getElementById('modalPlanSelect');
-        if (planSelect) {
-          const selectedOpt = planSelect.options[planSelect.selectedIndex];
-          leadCapacity = selectedOpt.getAttribute('data-capacity') || selectedOpt.value;
-          leadPrice = selectedOpt.getAttribute('data-price') || '$65 / año';
-        }
-        leadFrequency = chosenFrequency || 'Quincenal';
-      } else if (productId === 'colegios-docentes') {
-        leadCapacity = 'Personal Docente por Horas';
-        leadFrequency = chosenFrequency || 'Quincenal';
-        leadPrice = '$97 Licencia Anual';
-      } else if (productId === 'colegios-cxc') {
-        leadCapacity = 'Institución Educativa (Alumnos / Grados)';
-        leadFrequency = 'Licencia Completa';
-        leadPrice = '$197 Licencia Completa';
+      if (productId === 'suite-nomina' && isVisible(planSelect)) {
+        const selectedOpt = planSelect.options[planSelect.selectedIndex];
+        leadCapacity = selectedOpt.getAttribute('data-capacity') || selectedOpt.value;
+        leadPrice = selectedOpt.getAttribute('data-price') || leadPrice;
       } else if (productId === 'combo-colegios') {
-        leadCapacity = 'Institución Educativa (Docentes + Cobranzas)';
-        leadFrequency = chosenFrequency || 'Quincenal';
         leadPrice = '$247 Combo Docente + CxC (Ahorro $47)';
-      } else if (productId === 'utilidades') {
-        leadCapacity = 'Personal de la Empresa';
-        leadFrequency = 'Pago Único';
-        leadPrice = '$17 Actualizada';
-      } else if (productId === 'cuentas-por-pagar') {
-        leadCapacity = 'Gestión Proveedores y Tesorería';
-        leadFrequency = 'Pago Único';
-        leadPrice = '$27 Pago Único';
-      } else if (productId === 'liquidacion') {
-        leadCapacity = 'Cálculo de Personal';
-        leadFrequency = 'Pago Único';
-        leadPrice = '$17 Herramienta Excel';
-      } else if (productId === 'fondo-pensiones') {
-        leadCapacity = 'Declaración DPP';
-        leadFrequency = 'Pago Único';
-        leadPrice = '$12 Plantilla Formulada';
-      } else if (productId === 'vacaciones') {
-        leadCapacity = 'Personal de la Empresa';
-        leadFrequency = 'Pago Único';
-        leadPrice = '$12 Formato Excel';
-      } else if (productId === 'masterclass-ingreso' || productId === 'masterclass-parafiscales') {
-        leadCapacity = 'Acceso Formativo';
-        leadFrequency = 'Acceso Permanente';
-        leadPrice = '$17 Acceso + Material';
       }
 
       // Guardar información del lead para la página de agradecimiento
@@ -1075,6 +1038,7 @@ document.addEventListener('DOMContentLoaded', () => {
       sessionStorage.setItem('lead_product', productName);
       sessionStorage.setItem('lead_message', message);
       sessionStorage.setItem('lead_source', 'product_modal');
+      sessionStorage.setItem('lead_product_id', productId);
       sessionStorage.setItem('lead_capacity', leadCapacity);
       sessionStorage.setItem('lead_frequency', leadFrequency);
       sessionStorage.setItem('lead_price', leadPrice);
@@ -1139,7 +1103,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const productText = productSelect && productSelect.selectedIndex >= 0 ? productSelect.options[productSelect.selectedIndex].text : 'solución seleccionada';
       const productId = productSelect ? productSelect.value : '';
       const staffSelect = document.getElementById('contactStaff');
-      const staffText = staffSelect && staffSelect.selectedIndex >= 0 ? staffSelect.options[staffSelect.selectedIndex].text : 'No especificado';
+      // Capacidad solo si el cliente la eligió (el selector es opcional)
+      const staffText = staffSelect && staffSelect.value ? staffSelect.options[staffSelect.selectedIndex].text : '';
 
       if (!firstName || !lastName || !company || !phone || !email || !productSelect?.value) {
         if (formFeedback) {
@@ -1160,45 +1125,36 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.innerHTML = '<span class="spinner-inline"></span> Registrando requerimiento...';
       }
 
-      // Determinar Capacidad, Frecuencia y Monto para el formato de WhatsApp requerido por Gehydis
-      let leadCapacity = staffText || '11 a 20 trabajadores';
-      let leadFrequency = 'Semanal / Quincenal';
-      let leadPrice = 'A cotizar según requerimiento';
+      // Solo lo que el cliente indicó: este formulario no pregunta frecuencia, y la capacidad es opcional.
+      // El precio es el del producto elegido (en la Suite depende de la capacidad que marcó).
+      const leadCapacity = staffText;
+      const leadFrequency = '';
+      let leadPrice = '';
 
       if (productId === 'suite-nomina') {
-        leadFrequency = 'Semanal / Quincenal';
-        if (leadCapacity.includes('10')) leadPrice = '$45 / año';
-        else if (leadCapacity.includes('20')) leadPrice = '$65 / año';
-        else if (leadCapacity.includes('50')) leadPrice = '$89 / año';
-        else if (leadCapacity.includes('100') && !leadCapacity.includes('Más')) leadPrice = '$127 / año';
-        else if (leadCapacity.includes('Más')) leadPrice = 'A medida bajo cotización';
+        if (staffSelect.value === '1-10') leadPrice = '$45 / año';
+        else if (staffSelect.value === '11-20') leadPrice = '$65 / año';
+        else if (staffSelect.value === '21-50') leadPrice = '$89 / año';
+        else if (staffSelect.value === '51-100') leadPrice = '$127 / año';
+        else if (staffSelect.value === 'mas-100') leadPrice = 'A medida bajo cotización';
         else leadPrice = 'Desde $45 / año';
       } else if (productId === 'colegios-docentes') {
-        leadFrequency = 'Semanal / Quincenal';
         leadPrice = '$97 Licencia Anual';
       } else if (productId === 'colegios-cxc') {
-        leadFrequency = 'Licencia Completa';
         leadPrice = '$197 Licencia Completa';
       } else if (productId === 'combo-colegios') {
-        leadFrequency = 'Licencia Institucional';
         leadPrice = '$247 Combo Docente + CxC (Ahorro $47)';
       } else if (productId === 'cuentas-por-pagar') {
-        leadFrequency = 'Pago Único';
         leadPrice = '$27 Pago Único';
       } else if (productId === 'utilidades') {
-        leadFrequency = 'Pago Único';
         leadPrice = '$17 Actualizada';
       } else if (productId === 'liquidacion') {
-        leadFrequency = 'Pago Único';
         leadPrice = '$17 Herramienta Excel';
       } else if (productId === 'fondo-pensiones') {
-        leadFrequency = 'Pago Único';
         leadPrice = '$12 Plantilla Formulada';
       } else if (productId === 'vacaciones') {
-        leadFrequency = 'Pago Único';
         leadPrice = '$12 Formato Excel';
       } else if (productId.includes('masterclass')) {
-        leadFrequency = 'Acceso Permanente';
         leadPrice = '$17 Acceso + Material';
       }
 
@@ -1210,6 +1166,7 @@ document.addEventListener('DOMContentLoaded', () => {
       sessionStorage.setItem('lead_product', productText);
       sessionStorage.setItem('lead_message', message);
       sessionStorage.setItem('lead_source', 'main_contact_form');
+      sessionStorage.setItem('lead_product_id', productId);
       sessionStorage.setItem('lead_capacity', leadCapacity);
       sessionStorage.setItem('lead_frequency', leadFrequency);
       sessionStorage.setItem('lead_price', leadPrice);
