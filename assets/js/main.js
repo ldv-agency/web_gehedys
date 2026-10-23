@@ -429,6 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const prodAttr = btn.getAttribute('data-product');
       if (prodAttr && contactProductSelect) {
         contactProductSelect.value = prodAttr;
+        contactProductSelect.dispatchEvent(new Event('change'));
       }
 
       // Actualizar hash en URL sin salto brusco
@@ -737,6 +738,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const formFeedback = document.getElementById('formFeedback');
   const contactProductSelect = document.getElementById('contactProduct');
 
+  // "No aplica" en número de trabajadores para productos donde no corresponde (Cuentas por Pagar y Masterclass)
+  const contactStaffSelect = document.getElementById('contactStaff');
+  const PRODUCTOS_SIN_TRABAJADORES = ['cuentas-por-pagar', 'masterclass-ingreso', 'masterclass-parafiscales'];
+  if (contactProductSelect && contactStaffSelect) {
+    contactProductSelect.addEventListener('change', () => {
+      if (PRODUCTOS_SIN_TRABAJADORES.includes(contactProductSelect.value)) {
+        contactStaffSelect.value = 'no-aplica';
+      } else if (contactStaffSelect.value === 'no-aplica') {
+        contactStaffSelect.value = '';
+      }
+    });
+  }
+
   let currentModalProductPrice = '';
   let currentModalProductId = '';
 
@@ -771,6 +785,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Pre-seleccionar también en el formulario principal si existe la opción
     if (contactProductSelect && id) {
       contactProductSelect.value = id;
+      contactProductSelect.dispatchEvent(new Event('change'));
     }
 
     // Configurar método de pago: Ocultar para botón flotante de WhatsApp, mostrar SOLO en formularios del catálogo

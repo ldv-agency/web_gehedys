@@ -130,7 +130,9 @@
       const leadName = (sessionStorage.getItem('lead_name') || '').trim();
       const leadCompany = (sessionStorage.getItem('lead_company') || '').trim();
       const leadProduct = (sessionStorage.getItem('lead_product') || '').trim();
-      const leadCapacity = (sessionStorage.getItem('lead_capacity') || '').trim();
+      // "No aplica" (Cuentas por Pagar, Masterclass) no se muestra: no aporta al pedido
+      const capacityRaw = (sessionStorage.getItem('lead_capacity') || '').trim();
+      const leadCapacity = /^no aplica$/i.test(capacityRaw) ? '' : capacityRaw;
       const leadFrequency = (sessionStorage.getItem('lead_frequency') || '').trim();
       const leadPrice = (sessionStorage.getItem('lead_price') || '').trim();
       const leadMessage = (sessionStorage.getItem('lead_message') || '').trim();
